@@ -1,47 +1,28 @@
 const authRouter = require('express').Router();  // Create a new router instance
+const authCtrl = require("./auth.controller")
+const { bodyValidator } = require("../../middleware/validator.middleware")
+
+const { signUpDTO } = require("./auth.contract")
+
+
 
 // Signup route
-authRouter.post('/signup', (req, res) => {
-    // Logic for signup
-    //output
-    const data = req.body
-    const output = {}
-
-    res.status(201).json({
-        result: output, //output send my the logic
-        message: "", //response of success or fail eg. acc successfully created
-        meta: null, //null or object//to send supportive content eg. to know how many data ,pages left in pagination etc
-        status: "REGISTER_SUCESS" //for knowinf the token is expired or not
-
-    });
-});
+authRouter.post('/signup', bodyValidator(signUpDTO), authCtrl.signUp);
 //to get loggedin users detail
-authRouter.get('/me', (req, res) => {
-    // Logic for token verification
-});
+authRouter.get('/me', authCtrl.getUser);
 // Activate user via token
-authRouter.get('/activate/:token', (req, res) => {
-    // Logic for token verification
-});
+authRouter.get('/activate/:token', authCtrl.activateUser);
 
 // Signin route
-authRouter.post('/signin', (req, res) => {
-    // Logic for signin
-});
+authRouter.post('/signin', authCtrl.signIn);
 
 // Logout route
-authRouter.delete('/logout', (req, res) => {
-    // Logic for logout
-});
+authRouter.delete('/logout', authCtrl.logout);
 
 // Forgot password route
-authRouter.post('/forget-password', (req, res) => {
-    // Logic for forgot password
-});
+authRouter.post('/forget-password', authCtrl.forgotPassword);
 
 // Reset password route
-authRouter.patch('/reset-password/:token', (req, res) => {
-    // Logic for resetting password
-});
+authRouter.patch('/reset-password/:token', authCtrl.resetPassword);
 
 module.exports = authRouter;  // Correctly export the authRouter
