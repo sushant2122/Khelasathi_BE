@@ -1,13 +1,18 @@
 const authRouter = require('express').Router();  // Create a new router instance
 const authCtrl = require("./auth.controller")
 const { bodyValidator } = require("../../middleware/validator.middleware")
-
 const { signUpDTO } = require("./auth.contract")
 
-
-
+//config for uploader 
+const { setPath, uploader } = require("../../middleware/uploader.middleware")
+const { tmpUpload } = require("../../config/cloudinary.config")
 // Signup route
-authRouter.post('/signup', bodyValidator(signUpDTO), authCtrl.signUp);
+
+authRouter.post('/signup',
+    //  setPath('User/'),uploader.single("avatar"), //for uploading in local 
+    tmpUpload.single("profileimage"),
+    bodyValidator(signUpDTO), authCtrl.signUp);
+
 //to get loggedin users detail
 authRouter.get('/me', authCtrl.getUser);
 // Activate user via token

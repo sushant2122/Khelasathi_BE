@@ -1,3 +1,5 @@
+const { cloudinary } = require("../../config/cloudinary.config")
+const { uploadHelper } = require("../../utilities/helper")
 
 class AuthController {
     signUp = async (req, res, next) => {
@@ -5,7 +7,8 @@ class AuthController {
         try {
 
             const data = req.body
-
+            const uploadFile = await uploadHelper(req.file)
+            console.log(uploadFile)
         }
         catch (exception) {
 

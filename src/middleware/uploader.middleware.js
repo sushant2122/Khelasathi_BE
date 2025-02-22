@@ -1,0 +1,48 @@
+const multer = require("multer");
+const fs = require("fs");
+
+// const uploader = multer({ dest: "uploads/" });
+
+const myStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // location set // user/
+        const path = "./public/uploads/" + req.uploadDir
+        // ./public/uploads/user/
+        if (!fs.existsSync(path)) {
+            fs.mkdirSync(path, { recursive: true })
+        }
+        cb(null, path)
+    },
+    filename: (req, file, cb) => {
+        const ext = file.originalname.split(".").pop();
+        const randNum = Math.ceil(Math.random() * 999);
+        const filename = Date.now() + "-" + randNum + "." + ext;
+
+        cb(null, filename)
+    }
+})
+const uploader = multer({
+    storage: myStorage,
+    fileFilter: (req, file, cb) => {
+        const ext = file.originalname.split('.').pop(); // JPG
+        // image 
+        if (['jpg', 'jpeg', 'png', 'svg', 'webp', 'bmp', 'gif'].includes(ext.toLowerCase())) {
+            cb(null, true)
+        } else {
+            cb({ detail: { image: "File format not supported" }, status: 400, message: "Validation Failed" }, false);
+        }
+    },
+    limits: {
+        fileSize: 3000000
+    }
+});
+const setPath = (path) => {
+    return (req, res, next) => {
+        req.uploadDir = path;
+        next()
+    }
+}
+module.exports = {
+    uploader,
+    setPath
+}
