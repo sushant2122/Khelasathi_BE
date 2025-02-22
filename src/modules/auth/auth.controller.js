@@ -1,5 +1,8 @@
-const { cloudinary } = require("../../config/cloudinary.config")
-const { uploadHelper } = require("../../utilities/helper")
+
+const Mailsvc = require("../../services/mail.service");
+const { uploadHelper, fileDelete, randomStringGenerator } = require("../../utilities/helper")
+const bcrypt = require("bcryptjs");
+const { myEvent, EventName } = require("../../middleware/events.middleware")
 
 class AuthController {
     signUp = async (req, res, next) => {
@@ -7,12 +10,37 @@ class AuthController {
         try {
 
             const data = req.body
-            const uploadFile = await uploadHelper(req.file)
-            console.log(uploadFile)
+            if (req.file) {
+                data.image = await uploadHelper(req.file.path);
+            }
+
+            data.password = bcrypt.hashSync(data.password, 10);
+            //bcrypt =>user -createdtime,ipaddress,salt,hash func
+
+            //db operation
+
+
+            data.activationtoken = randomStringGenerator(100)
+            //willl be useful in reschedule and cancellation
+            data.tokenExpires = new Date(Date.now() + (60 * 60 * 3 * 1000))
+
+
+            myEvent.emit(EventName.SIGNUP_EMAIL, { name: data.firstname, email: data.email, token: data.activationtoken })
+
+
+
+            res.json({
+                result: data,
+                meta: null,
+                message: "Your account has been registered successfully.",
+                status: "REGISTER_SUCESS"
+            });
+
         }
         catch (exception) {
-
-
+            if (req.file) {
+                fileDelete(req.file.path);
+            }
         }
     }
 

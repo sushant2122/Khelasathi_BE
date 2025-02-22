@@ -11,7 +11,8 @@ const signUpDTO = Joi.object({
     confirmpassword: Joi.string().equal(Joi.ref('password')).required().messages({
         "any.only": "password and confirm password does not match"
     }),
-    role: Joi.string().regex(/^(player|admin|venue)$/)
+    role: Joi.string().regex(/^(player|admin|venue)$/),
+    profileimage: Joi.string()
 });
 
 module.exports = { signUpDTO }

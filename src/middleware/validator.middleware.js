@@ -2,6 +2,12 @@ const bodyValidator = (schema) => {
     return async (req, res, next) => {
         try {
             const data = req.body;
+            if (req.file) {
+                const fieldname = req.file.fieldname;
+                data[fieldname] = req.file.filename
+            } else if (req.files) {
+
+            }
             const response = await schema.validateAsync(data, { abortEarly: false })
             next();
 
