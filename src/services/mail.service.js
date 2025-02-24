@@ -19,9 +19,9 @@ class MailService {
                 }
             }
             this.transport = nodemailer.createTransport(connectionOps)
-            console.log("Email Server connected successfully.")
+            console.log("✅ Email Server connected successfully.")
         } catch (exception) {
-            console.log("Error connecting mail service....", exception)
+            console.log("❌ Error connecting mail service....", exception)
             throw exception
         }
     }

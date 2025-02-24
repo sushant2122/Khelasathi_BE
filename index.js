@@ -7,8 +7,8 @@ const server = http.createServer(app)
 //the site will be loading untill it responds if requestresponse cycle is not complete
 server.listen(9005, "127.0.0.1", (err) => {
     if (!err) {
-        console.log("Server is running")
-        console.log("ctrl+c to disconnect")
+        console.log("✅ Server is running")
+        console.log("✅ ctrl+c to disconnect")
     }
 })
 
