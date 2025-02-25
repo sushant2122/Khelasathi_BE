@@ -41,7 +41,19 @@ const userSchema = {
             model: 'Roles',  // Ensure this refers to the actual table name ('Roles')
             key: 'role_id'
         }
-    }
+    },
+    profile_img: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    activationtoken: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    activefor: {
+        type: DataTypes.DATE,
+    },
+
 };
 
 const createUserModel = async (sequelize) => {

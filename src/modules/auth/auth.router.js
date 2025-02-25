@@ -7,13 +7,17 @@ const { setPath, uploader } = require("../../middleware/uploader.middleware")
 
 // Signup route
 authRouter.post('/signup',
-    setPath('User/'), uploader.single("profileimage"), //for uploading in local 
+    setPath('User/'), uploader.single("profile_img"), //for uploading in local 
     bodyValidator(signUpDTO), authCtrl.signUp);
+
+// Activate user via token
+authRouter.get('/activate/:token', authCtrl.activateUser);
+
+authRouter.get('/re-send/activation/:token', authCtrl.resendToken);
 
 //to get loggedin users detail
 authRouter.get('/me', authCtrl.getUser);
-// Activate user via token
-authRouter.get('/activate/:token', authCtrl.activateUser);
+
 
 // Signin route
 authRouter.post('/signin', authCtrl.signIn);

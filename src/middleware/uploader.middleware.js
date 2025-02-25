@@ -14,6 +14,9 @@ const myStorage = multer.diskStorage({
         cb(null, path)
     },
     filename: (req, file, cb) => {
+        // file name unique, a.jpg
+        // filename > filename.ext
+        // a.b.c.jpg => ["a","b",'c',"jpg"]
         const ext = file.originalname.split(".").pop();
         const randNum = Math.ceil(Math.random() * 999);
         const filename = Date.now() + "-" + randNum + "." + ext;

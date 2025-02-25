@@ -44,6 +44,7 @@ const initDb = async () => {
 initDb();
 
 module.exports = {
+    sequelize,
     roleModel,
     userModel
 };

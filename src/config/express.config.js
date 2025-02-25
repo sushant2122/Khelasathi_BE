@@ -3,7 +3,7 @@ const express = require('express');
 require("./db.config")
 const router = require('./router.config')
 const app = express()
-
+const multer = require("multer");
 //json parser
 app.use(express.json()); //it will recieve the json data
 app.use(express.urlencoded({ //for recieveing urlencoded data 
@@ -17,14 +17,26 @@ app.use("/api/v1", router) //this is the rightway to define the route for versio
 
 //if the url is not found this response is shown 
 //the argument passed in this next is catched by the error on the below function
+
+
 app.use((req, res, next) => {
     next({
         code: 404, message: "Resource not found", status: "NOT_FOUND"
     });
 
 });
+
 //error handling middleware
 app.use((error, req, res, next) => {
+
+    // if (error instanceof multer.MulterError) {
+    //     return res.status(400).json({
+    //         message: error.message,
+    //         status: 'FILE_UPLOAD_ERROR',
+    //         detail: error.detail || null
+    //     });
+    // }
+
     //
     console.log("---------------------------------------Error handler:", error);
     let result = error.detail || null;
