@@ -27,7 +27,7 @@ async function seedRoles(roleModel) {
 
             console.log('✅ Roles seeded successfully!');
         } else {
-            console.log('Roles already exist in the database.');
+            // console.log('Roles already exist in the database.');
         }
     } catch (error) {
         console.error('Error seeding roles:', error);

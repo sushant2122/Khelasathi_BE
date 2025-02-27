@@ -43,7 +43,7 @@ class AuthService {
 
             // If no existing user, create a new user
             const newUser = await userModel.create(userData);
-            console.log('✅ User created successfully:', newUser.toJSON());
+
             return newUser;
 
         } catch (error) {

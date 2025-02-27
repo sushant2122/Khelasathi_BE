@@ -30,7 +30,6 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
 
     //
-    console.log("---------------------------------------Error handler:", error);
     let result = error.detail || null;
     let message = error.message || "Server error...";
     let status = error.status || "INTERNAL_SERVER_ERROR"

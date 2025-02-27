@@ -12,7 +12,7 @@ const roleSchema = {
     }
 }
 
-const createRoleModel = async (sequelize) => {
+const createRoleModel = (sequelize) => {
     const Role = sequelize.define('Roles', roleSchema);
     return Role;
 

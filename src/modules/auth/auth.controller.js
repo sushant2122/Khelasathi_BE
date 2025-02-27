@@ -2,8 +2,7 @@
 const { fileDelete } = require("../../utilities/helper")
 const { myEvent, EventName } = require("../../middleware/events.middleware")
 const { authSvc } = require("../auth/auth.service");
-const { sequelize } = require("../../config/db.config");
-const { createUserModel } = require("../user/user.model");
+const { User } = require("../../config/db.config");
 const { randomStringGenerator } = require("../../utilities/helper");
 const { Status } = require("../../config/constants.config");
 const bcrypt = require("bcryptjs")
@@ -14,10 +13,9 @@ class AuthController {
             // Transform user details (including file upload if present)
             const data = await authSvc.transformUserDetails(req);
 
-            let userModel = await createUserModel(sequelize);
 
             // Create the user and handle the result
-            const userCreationResult = await authSvc.createUser(userModel, data, next);
+            const userCreationResult = await authSvc.createUser(User, data, next);
 
             // If user creation was successful, emit the event for email
             if (userCreationResult) {
@@ -49,8 +47,8 @@ class AuthController {
     activateUser = async (req, res, next) => {
         try {
             const token = req.params.token;
-            let userModel = await createUserModel(sequelize);
-            const userDetails = await authSvc.getSingleUserByFilter(userModel, { activationtoken: token });
+
+            const userDetails = await authSvc.getSingleUserByFilter(User, { activationtoken: token });
 
             let tokenExpiry = new Date(userDetails.activefor);
             const today = new Date();
@@ -65,7 +63,7 @@ class AuthController {
                 is_verified: Status.ACTIVE
             }
 
-            await authSvc.updateUserById(userModel, { user_id: userDetails.user_id }, updateBody)
+            await authSvc.updateUserById(User, { user_id: userDetails.user_id }, updateBody)
             myEvent.emit(EventName.ACTIVATION_EMAIL, { name: userDetails.full_name, email: userDetails.email });
 
 
@@ -83,14 +81,14 @@ class AuthController {
     resendToken = async (req, res, next) => {
         try {
             const token = req.params.token;
-            let userModel = await createUserModel(sequelize);
-            const userDetails = await authSvc.getSingleUserByFilter(userModel, { activationtoken: token });
+
+            const userDetails = await authSvc.getSingleUserByFilter(User, { activationtoken: token });
 
             const activationToken = randomStringGenerator(100)
             //willl be useful in reschedule and cancellation
             const activeFor = new Date(Date.now() + (60 * 60 * 1 * 1000))
 
-            await authSvc.updateUserById(userModel, { user_id: userDetails.user_id }, { activationtoken: activationToken, activefor: activeFor })
+            await authSvc.updateUserById(User, { user_id: userDetails.user_id }, { activationtoken: activationToken, activefor: activeFor })
 
             myEvent.emit(EventName.SIGNUP_EMAIL, { name: userDetails.full_name, email: userDetails.email, token: activationToken });
 
@@ -114,8 +112,8 @@ class AuthController {
         try {
             const { email, password } = req.body;
 
-            let userModel = await createUserModel(sequelize);
-            const user = await authSvc.getSingleUserByFilter(userModel, { email: email });
+
+            const user = await authSvc.getSingleUserByFilter(User, { email: email });
             //exists
             if (bcrypt.compareSync(password, user.password)) {
                 if (user.is_verified !== Status.ACTIVE) {
@@ -181,9 +179,9 @@ class AuthController {
             const { email } = req.body;
             const resettoken = randomStringGenerator(100)
             const reset_activefor = new Date(Date.now() + (60 * 60 * 3 * 1000))
-            let userModel = await createUserModel(sequelize);
-            const user = await authSvc.getSingleUserByFilter(userModel, { email: email });
-            await authSvc.updateUserById(userModel, { user_id: user.user_id }, { resettoken: resettoken, reset_activefor: reset_activefor })
+
+            const user = await authSvc.getSingleUserByFilter(User, { email: email });
+            await authSvc.updateUserById(User, { user_id: user.user_id }, { resettoken: resettoken, reset_activefor: reset_activefor })
             myEvent.emit(EventName.FORGET_PASSWORD, { name: user.full_name, email: email, token: resettoken });
             res.json({
                 result: {
@@ -204,8 +202,8 @@ class AuthController {
     resetPassword = async (req, res, next) => {
         try {
             const resettoken = req.params.token;
-            let userModel = await createUserModel(sequelize);
-            const user = await authSvc.getSingleUserByFilter(userModel, { resettoken: resettoken });
+
+            const user = await authSvc.getSingleUserByFilter(User, { resettoken: resettoken });
 
             const { password } = req.body;
 
@@ -219,7 +217,7 @@ class AuthController {
             }
 
 
-            await authSvc.updateUserById(userModel, { user_id: user.user_id }, { password: hashedPassword, resettoken: null, reset_activefor: null })
+            await authSvc.updateUserById(User, { user_id: user.user_id }, { password: hashedPassword, resettoken: null, reset_activefor: null })
 
             myEvent.emit(EventName.SIGNUP_EMAIL, { name: user.full_name, email: user.email });
 
@@ -242,10 +240,10 @@ class AuthController {
 
             const hashedPassword = bcrypt.hashSync(password, 10);
             const userDetails = req.authUser;
-            let userModel = await createUserModel(sequelize);
-            const user = await authSvc.getSingleUserByFilter(userModel, { user_id: userDetails.user_id });
+
+            const user = await authSvc.getSingleUserByFilter(User, { user_id: userDetails.user_id });
             if (bcrypt.compareSync(current_password, user.password)) {
-                await authSvc.updateUserById(userModel, { user_id: user.user_id }, { password: hashedPassword })
+                await authSvc.updateUserById(User, { user_id: user.user_id }, { password: hashedPassword })
                 res.json({
                     message: "Password changed successfully.",
                     status: "SUCCESS",

@@ -58,7 +58,7 @@ const userSchema = {
 
 };
 
-const createUserModel = async (sequelize) => {
+const createUserModel = (sequelize) => {
     const User = sequelize.define('Users', userSchema);
     return User;
 };

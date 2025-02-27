@@ -2,6 +2,7 @@ const { DataTypes, Sequelize } = require("sequelize");
 
 const bannerSchema = {
 
+
 };
 
 const createBannerModel = async (sequelize) => {
