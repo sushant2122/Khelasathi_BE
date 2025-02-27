@@ -1,23 +1,19 @@
 
 const { DataTypes } = require('sequelize');
 
-const RoleEnum = ['Admin', 'Venue', 'Player'];
 const roleSchema = {
-    role_id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+    role_title: {
+        type: DataTypes.STRING,
+        allowNull: false,
         primaryKey: true
     },
-    title: {
-        type: DataTypes.ENUM(...RoleEnum),
-        allowNull: false
-    },
-    description: { type: DataTypes.TEXT }
-
+    description: {
+        type: DataTypes.TEXT
+    }
 }
 
 const createRoleModel = async (sequelize) => {
-    const Role = sequelize.define('Role', roleSchema);
+    const Role = sequelize.define('Roles', roleSchema);
     return Role;
 
 }

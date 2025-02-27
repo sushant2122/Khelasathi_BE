@@ -11,7 +11,7 @@ const signUpDTO = Joi.object({
     confirmpassword: Joi.string().equal(Joi.ref('password')).required().messages({
         "any.only": "password and confirm password does not match"
     }),
-    role_id: Joi.number().required(),
+    role_title: Joi.string().regex(/^(Admin|Venue|Player)$/).required(),
     contact_number: Joi.string().min(10).max(10).required(),
     profile_img: Joi.string()
 });

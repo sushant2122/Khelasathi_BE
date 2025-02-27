@@ -29,14 +29,6 @@ app.use((req, res, next) => {
 //error handling middleware
 app.use((error, req, res, next) => {
 
-    // if (error instanceof multer.MulterError) {
-    //     return res.status(400).json({
-    //         message: error.message,
-    //         status: 'FILE_UPLOAD_ERROR',
-    //         detail: error.detail || null
-    //     });
-    // }
-
     //
     console.log("---------------------------------------Error handler:", error);
     let result = error.detail || null;

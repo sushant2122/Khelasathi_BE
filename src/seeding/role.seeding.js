@@ -6,19 +6,19 @@ async function seedRoles(roleModel) {
         if (existingRoles.length === 0) {
             await roleModel.bulkCreate([
                 {
-                    title: 'Admin',
+                    role_title: 'Admin',
                     description: 'Administrator role with all permissions',
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 },
                 {
-                    title: 'Venue',
+                    role_title: 'Venue',
                     description: 'Venue role with permission to manage bookings',
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 },
                 {
-                    title: 'Player',
+                    role_title: 'Player',
                     description: 'Player role with permission to book and play futsal',
                     createdAt: new Date(),
                     updatedAt: new Date(),

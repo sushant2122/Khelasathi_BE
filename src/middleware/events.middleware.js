@@ -2,7 +2,8 @@ const eventEmitter = require("events");
 const myEvent = new eventEmitter()
 const Mailsvc = require("../services/mail.service")
 const EventName = {
-    SIGNUP_EMAIL: "signup"
+    SIGNUP_EMAIL: "signup",
+    ACTIVATION_EMAIL: "accountactivated"
 }
 
 myEvent.on(EventName.SIGNUP_EMAIL, async (data) => {
@@ -21,6 +22,31 @@ myEvent.on(EventName.SIGNUP_EMAIL, async (data) => {
             <p>${process.env.SMTP_FROM}</p>`
         })
         console.log("signup email send")
+
+
+    } catch (exception) {
+
+        process.exit(1);
+
+    }
+})
+
+myEvent.on(EventName.ACTIVATION_EMAIL, async (data) => {
+    try {
+        await Mailsvc.mailSend({
+            to: data.email,
+            sub: "Account activated",
+            message: `
+            Dear ${data.name},</br>
+            <p> Your account has been successfully activated.click the link below for signing in
+          <a href="${process.env.FRONTEND_URL}/signin">Sign in</a>
+            </br>
+            <p><strong>Note:</strong>Please do not reply to this email.</p>
+            <p>Regards</p>
+            <p>Khelasathi</p>
+            <p>${process.env.SMTP_FROM}</p>`
+        })
+        console.log("Activation successful email send")
 
 
     } catch (exception) {

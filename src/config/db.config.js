@@ -24,8 +24,8 @@ const initDb = async () => {
         userModel = await createUserModel(sequelize);
 
         // Associate models
-        userModel.belongsTo(roleModel, { foreignKey: 'role_id' });  // User belongs to Role
-        roleModel.hasMany(userModel, { foreignKey: 'role_id' });    // Role has many Users
+        userModel.belongsTo(roleModel, { foreignKey: 'role_title' });  // User belongs to Role
+        roleModel.hasMany(userModel, { foreignKey: 'role_title' });    // Role has many Users
 
         // Sync database
         await sequelize.sync();

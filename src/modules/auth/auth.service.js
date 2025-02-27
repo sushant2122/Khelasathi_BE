@@ -1,3 +1,4 @@
+const { Status } = require("../../config/constants.config");
 const { uploadHelper, randomStringGenerator } = require("../../utilities/helper")
 const bcrypt = require("bcryptjs");
 class AuthService {
@@ -16,6 +17,8 @@ class AuthService {
         data.activationtoken = randomStringGenerator(100)
         //willl be useful in reschedule and cancellation
         data.activefor = new Date(Date.now() + (60 * 60 * 3 * 1000))
+
+        data.is_verified = Status.INACTIVE;
 
         return data;
     }

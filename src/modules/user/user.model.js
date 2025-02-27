@@ -1,5 +1,4 @@
-const { DataTypes, Sequelize } = require("sequelize");
-
+const { DataTypes } = require("sequelize");
 const userSchema = {
     user_id: {
         type: DataTypes.INTEGER,
@@ -30,16 +29,12 @@ const userSchema = {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-    date_joined: {
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW
-    },
-    role_id: {
-        type: DataTypes.INTEGER,
+    role_title: {
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
             model: 'Roles',  // Ensure this refers to the actual table name ('Roles')
-            key: 'role_id'
+            key: 'role_title'
         }
     },
     profile_img: {
@@ -57,7 +52,7 @@ const userSchema = {
 };
 
 const createUserModel = async (sequelize) => {
-    const User = sequelize.define('User', userSchema);
+    const User = sequelize.define('Users', userSchema);
     return User;
 };
 

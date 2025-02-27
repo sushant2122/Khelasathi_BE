@@ -6,18 +6,18 @@ async function seedAdminUser(userModel, roleModel) {
         const password = bcrypt.hashSync("admin", 10);
 
         // 🔍 Find the Admin role
-        const adminRole = await roleModel.findOne({
-            where: { title: 'Admin' }
-        });
+        // const adminRole = await roleModel.findOne({
+        //     where: { title: 'Admin' }
+        // });
 
 
-        if (!adminRole) {
-            throw new Error("❌ Admin role not found. Please ensure roles are seeded first.");
-        }
+        // if (!adminRole) {
+        //     throw new Error("❌ Admin role not found. Please ensure roles are seeded first.");
+        // }
 
         // 🔍 Check if an admin user already exists (based on role_id)
         const existingAdmin = await userModel.findOne({
-            where: { role_id: adminRole.role_id }
+            where: { role_title: 'Admin' }
         });
 
         if (existingAdmin) {
@@ -30,7 +30,7 @@ async function seedAdminUser(userModel, roleModel) {
             email: 'sushantpaudyal@gmail.com',
             password: password,
             address: 'Kausalthar, Bhaktapur',
-            role_id: adminRole.role_id,
+            role_title: 'Admin',
             is_verified: true,
             contact_number: '9861200112',
             profile_img: 'https://res.cloudinary.com/dbvyoelj5/image/upload/v1740502396/khelasathi/yxsfapk54vbh42ve958b.jpg',
