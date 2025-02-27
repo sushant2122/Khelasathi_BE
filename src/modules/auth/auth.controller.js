@@ -88,7 +88,7 @@ class AuthController {
 
             const activationToken = randomStringGenerator(100)
             //willl be useful in reschedule and cancellation
-            const activeFor = new Date(Date.now() + (60 * 60 * 3 * 1000))
+            const activeFor = new Date(Date.now() + (60 * 60 * 1 * 1000))
 
             await authSvc.updateUserById(userModel, { user_id: userDetails.user_id }, { activationtoken: activationToken, activefor: activeFor })
 
@@ -113,7 +113,7 @@ class AuthController {
     signIn = async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            console.log(req.body);
+
             let userModel = await createUserModel(sequelize);
             const user = await authSvc.getSingleUserByFilter(userModel, { email: email });
             //exists
@@ -164,8 +164,6 @@ class AuthController {
 
     }
 
-
-
     getUser = (req, res, next) => {
 
         res.json({
@@ -177,14 +175,92 @@ class AuthController {
 
     }
 
+    forgotPassword = async (req, res, next) => {
+        try {
+
+            const { email } = req.body;
+            const resettoken = randomStringGenerator(100)
+            const reset_activefor = new Date(Date.now() + (60 * 60 * 3 * 1000))
+            let userModel = await createUserModel(sequelize);
+            const user = await authSvc.getSingleUserByFilter(userModel, { email: email });
+            await authSvc.updateUserById(userModel, { user_id: user.user_id }, { resettoken: resettoken, reset_activefor: reset_activefor })
+            myEvent.emit(EventName.FORGET_PASSWORD, { name: user.full_name, email: email, token: resettoken });
+            res.json({
+                result: {
+                    resettoken,
+                    reset_activefor
+                },
+                message: "An email has been delivered for password reset token.",
+                meta: null,
+                status: "RESET_PASSWORD_TOKEN_SEND"
+            })
+
+        } catch (exception) {
+            next(exception)
+        }
+
+    }
+
+    resetPassword = async (req, res, next) => {
+        try {
+            const resettoken = req.params.token;
+            let userModel = await createUserModel(sequelize);
+            const user = await authSvc.getSingleUserByFilter(userModel, { resettoken: resettoken });
+
+            const { password } = req.body;
+
+            const hashedPassword = bcrypt.hashSync(password, 10);
+
+            let tokenExpiry = new Date(user.reset_activefor);
+            const today = new Date();
+
+            if (tokenExpiry < today) {
+                throw ({ code: 400, message: "Token already expired.", status: "ACTIVATION_TOKEN_EXPIRED" });
+            }
+
+
+            await authSvc.updateUserById(userModel, { user_id: user.user_id }, { password: hashedPassword, resettoken: null, reset_activefor: null })
+
+            myEvent.emit(EventName.SIGNUP_EMAIL, { name: user.full_name, email: user.email });
+
+
+            res.json({
+                message: "Password reset successfully.",
+                status: "SUCCESS",
+                meta: null
+            });
+
+
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    changePassword = async (req, res, next) => {
+        try {
+            const { current_password, password } = req.body;
+
+            const hashedPassword = bcrypt.hashSync(password, 10);
+            const userDetails = req.authUser;
+            let userModel = await createUserModel(sequelize);
+            const user = await authSvc.getSingleUserByFilter(userModel, { user_id: userDetails.user_id });
+            if (bcrypt.compareSync(current_password, user.password)) {
+                await authSvc.updateUserById(userModel, { user_id: user.user_id }, { password: hashedPassword })
+                res.json({
+                    message: "Password changed successfully.",
+                    status: "SUCCESS",
+                    meta: null
+                });
+            } else {
+                throw ({ code: 400, message: "Current Password didn't match.", status: "PASSWORD_UNMATCHED" });
+            }
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+    //logout left 
     logout = (req, res, next) => {
-
-    }
-    forgotPassword = (req, res, next) => {
-
-    }
-
-    resetPassword = (req, res, next) => {
 
     }
 }

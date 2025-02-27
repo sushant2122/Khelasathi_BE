@@ -48,6 +48,13 @@ const userSchema = {
     activefor: {
         type: DataTypes.DATE,
     },
+    resettoken: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    reset_activefor: {
+        type: DataTypes.DATE,
+    },
 
 };
 

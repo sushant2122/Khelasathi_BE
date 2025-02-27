@@ -16,4 +16,30 @@ const signUpDTO = Joi.object({
     profile_img: Joi.string()
 });
 
-module.exports = { signUpDTO }
+const forgotPasswordDTO = Joi.object({
+    password: Joi.string().required().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/).messages({
+        "string.pattern.base": "password must have atleast 8 digit with on capital letter special character and number"
+    }),
+    confirmpassword: Joi.string().equal(Joi.ref('password')).required().messages({
+        "any.only": "password and confirm password does not match"
+    }),
+
+});
+
+const changePasswordDTO = Joi.object({
+    current_password: Joi.string().required(),
+
+    password: Joi.string().required().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/).messages({
+        "string.pattern.base": "password must have atleast 8 digit with on capital letter special character and number"
+    }),
+    confirmpassword: Joi.string().equal(Joi.ref('password')).required().messages({
+        "any.only": "password and confirm password does not match"
+    }),
+
+});
+
+
+
+
+
+module.exports = { signUpDTO, forgotPasswordDTO, changePasswordDTO }

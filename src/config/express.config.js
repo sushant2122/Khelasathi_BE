@@ -9,7 +9,7 @@ app.use(express.json()); //it will recieve the json data
 app.use(express.urlencoded({ //for recieveing urlencoded data 
     extended: false
 }))
-app.use("/assets", express.static('./public/'))
+// app.use("/assets", express.static('./public/'))
 //form data can't be handled like this as it is route speicific
 
 //if we need to send it to all the five methods we can use use //accepts all the request
