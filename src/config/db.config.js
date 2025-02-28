@@ -3,8 +3,16 @@
 const { Sequelize } = require("sequelize");
 const { createRoleModel } = require("../modules/role/role.model");
 const { createUserModel } = require("../modules/user/user.model");
+
 const { seedRoles } = require("../seeding/role.seeding");
 const { seedAdminUser } = require("../seeding/admin.seeding");
+const { createBannerModel } = require("../modules/banner/banner.model");
+const { createFutsalModel } = require("../modules/futsal/futsal.model");
+const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
+const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
+const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
+const { createTagModel } = require("../modules/tag/tag.model");
+const { createFutsalMerchantPaymentModel } = require("../modules/futsal_merchant_payment/futsal_merchant_payment.model");
 
 const sequelize = new Sequelize(
     process.env.PG_DATABASE,
@@ -20,10 +28,54 @@ const sequelize = new Sequelize(
 // Create models once and export them
 const Role = createRoleModel(sequelize);
 const User = createUserModel(sequelize);
+const Banner = createBannerModel(sequelize);
+const Futsal = createFutsalModel(sequelize);
+const Credit_setting = createCreditSettingModel(sequelize);
+const Futsal_image = createFutsalImgModel(sequelize);
+const Tag = createTagModel(sequelize);
+const Futsal_tag = createFutsalTagModel(sequelize);
+
+
+
 
 // Define relationships once
+const FutsalMerchantPayment = createFutsalMerchantPaymentModel(sequelize);
+
+//relation defined for user and role
 User.belongsTo(Role, { foreignKey: "role_title" });  // User belongs to Role
 Role.hasMany(User, { foreignKey: "role_title" });    // Role has many Users
+
+//relation defined for user and banner
+User.hasMany(Banner, { foreignKey: "user_id" });  // One User has many Banners
+Banner.belongsTo(User, { foreignKey: "user_id" }); // One Banner belongs to one User
+
+//relation defined for user and futsal one user can have only one futsal
+User.hasOne(Futsal, { foreignKey: "owner_id" });
+Futsal.belongsTo(User, { foreignKey: "owner_id" });
+
+//relation defined for futsal and credit setting one to one one futsal have only one credit setting 
+Futsal.hasOne(Credit_setting, { foreignKey: "futsal_id" });
+Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
+
+
+//relation defined between futsal and futsla image one futsal can have many images 
+Futsal_image.belongsTo(Futsal, { foreignKey: "futsal_id" });
+Futsal.hasMany(Futsal_image, { foreignKey: "futsal_id" });
+
+//relation defined between futsal and tags through futsal tags table as it has many to many relationship
+Futsal.belongsToMany(Tag, { through: Futsal_tag, foreignKey: "futsal_id" });
+Tag.belongsToMany(Futsal, { through: Futsal_tag, foreignKey: "tag_id" });
+
+
+//  One Futsal can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
+Futsal.hasMany(FutsalMerchantPayment, { foreignKey: "futsal_id" });
+FutsalMerchantPayment.belongsTo(Futsal, { foreignKey: "futsal_id" });
+
+//  One Service can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
+Service.hasMany(FutsalMerchantPayment, { foreignKey: "service_id" });
+FutsalMerchantPayment.belongsTo(Service, { foreignKey: "service_id" });
+
+
 
 const initDb = async () => {
     try {
@@ -50,5 +102,12 @@ initDb();
 module.exports = {
     sequelize,
     User,
-    Role
+    Role,
+    Banner,
+    Futsal,
+    Credit_setting,
+    Futsal_image,
+    Tag,
+    Futsal_tag
+
 };

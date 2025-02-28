@@ -1,10 +1,18 @@
-const { DataTypes, Sequelize } = require("sequelize");
-
+const { DataTypes } = require("sequelize");
 const tagSchema = {
+    tag_id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    tagname: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true
+    }
 
 };
-
-const createTagModel = async (sequelize) => {
+const createTagModel = (sequelize) => {
     const Tag = sequelize.define('Tags', tagSchema);
     return Tag;
 };
