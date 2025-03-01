@@ -6,34 +6,35 @@ const bannerSchema = {
         autoIncrement: true,
         primaryKey: true
     },
-    image_url: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
     title: {
         type: DataTypes.STRING(255)
 
     },
-    description: {
-        type: DataTypes.TEXT
+    image_url: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    link: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     },
     created_by: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { 
-            model: Users,
-             key: 'user_id' 
-            }
+        references: {
+            model: 'Users',
+            key: 'user_id'
+        }
     },
     is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     }
 
-
+    //createdAt and updatedAt will be default
 };
 
-const createBannerModel = async (sequelize) => {
+const createBannerModel = (sequelize) => {
     const Banner = sequelize.define('Banners', bannerSchema);
     return Banner;
 };

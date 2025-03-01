@@ -1,7 +1,7 @@
 const authRouter = require('express').Router();  // Create a new router instance
 const authCtrl = require("./auth.controller")
 const { bodyValidator } = require("../../middleware/validator.middleware")
-const { signUpDTO, forgotPasswordDTO, changePasswordDTO } = require("./auth.contract")
+const { signUpDTO, forgotPasswordDTO, changePasswordDTO, resetDTO } = require("./auth.contract")
 //config for uploader 
 const { setPath, uploader } = require("../../middleware/uploader.middleware");
 const { loginCheck } = require('../../middleware/auth.middleware');
@@ -30,14 +30,12 @@ authRouter.get('/me', loginCheck, authCtrl.getUser);
 authRouter.delete('/logout', loginCheck, authCtrl.logout);
 
 // Forgot password route
-authRouter.post('/forget-password', authCtrl.forgotPassword);
+authRouter.post('/forget-password', bodyValidator(resetDTO), authCtrl.forgotPassword);
 
 // Reset password route
 authRouter.patch('/reset-password/:token', bodyValidator(forgotPasswordDTO), authCtrl.resetPassword);
 
 //one more for reseting password from logged in user
 authRouter.patch('/change-password', loginCheck, bodyValidator(changePasswordDTO), authCtrl.changePassword);
-
-
 
 module.exports = authRouter;  // Correctly export the authRouter

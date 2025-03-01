@@ -26,7 +26,7 @@ const loginCheck = async (req, res, next) => {
             }
             else {
                 let userModel = await createUserModel(sequelize);
-                const user = await authSvc.getSingleUserByFilter(userModel, { user_id: data.sub });
+                const user = await authSvc.getSingleUserByFilter({ user_id: data.sub });
                 req.authUser = {
                     user_id: user.user_id,
                     full_name: user.full_name,

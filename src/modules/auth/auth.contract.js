@@ -38,8 +38,13 @@ const changePasswordDTO = Joi.object({
 
 });
 
+const resetDTO = Joi.object({
+    email: Joi.string().email().required()
+});
 
 
 
 
-module.exports = { signUpDTO, forgotPasswordDTO, changePasswordDTO }
+
+
+module.exports = { signUpDTO, forgotPasswordDTO, changePasswordDTO, resetDTO }

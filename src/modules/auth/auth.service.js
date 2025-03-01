@@ -1,4 +1,5 @@
 const { Status } = require("../../config/constants.config");
+const { User } = require("../../config/db.config");
 const { uploadHelper, randomStringGenerator } = require("../../utilities/helper")
 const bcrypt = require("bcryptjs");
 class AuthService {
@@ -23,10 +24,10 @@ class AuthService {
         return data;
     }
 
-    createUser = async (userModel, userData, next) => {
+    createUser = async (userData, next) => {
         try {
             // Check if a user with the given email already exists
-            const existingUser = await userModel.findOne({
+            const existingUser = await User.findOne({
                 where: { email: userData.email }
             });
 
@@ -42,7 +43,7 @@ class AuthService {
             }
 
             // If no existing user, create a new user
-            const newUser = await userModel.create(userData);
+            const newUser = await User.create(userData);
 
             return newUser;
 
@@ -52,9 +53,9 @@ class AuthService {
         }
     };
 
-    getSingleUserByFilter = async (userModel, filter) => {
+    getSingleUserByFilter = async (filter) => {
         try {
-            const user = await userModel.findOne({
+            const user = await User.findOne({
                 where: filter
             });
 
@@ -70,13 +71,12 @@ class AuthService {
         }
     }
 
-    updateUserById = async (UserModel, filter, data) => {
+    updateUserById = async (filter, data) => {
         try {
             // Find the user by the given ID
-            const user = await UserModel.findOne({
+            const user = await User.findOne({
                 where: filter
             });
-
             // If user is not found, throw an error
             if (!user) {
                 throw ({ code: 404, message: "User not found", status: "USER_NOT_FOUND" });
