@@ -5,11 +5,11 @@ const fs = require("fs");
 
 const uploadHelper = async (filepath, folder = "khelasathi") => {
     try {
-        console.log("helper:", filepath);
+
         const uploadedFile = await cloudinary.uploader.upload(filepath, { resource_type: "auto", folder: folder })
         //delete image after uploading
         fileDelete(filepath);
-        console.log(uploadedFile.secure_url);
+
         return uploadedFile.secure_url;
 
     } catch (exception) {

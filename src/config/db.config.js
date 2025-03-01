@@ -43,8 +43,8 @@ User.belongsTo(Role, { foreignKey: "role_title" });  // User belongs to Role
 Role.hasMany(User, { foreignKey: "role_title" });    // Role has many Users
 
 //relation defined for user and banner
-Banner.belongsTo(User, { foreignKey: "created_by" }); // One Banner belongs to one User
-User.hasMany(Banner, { foreignKey: "created_by" });  // One User has many Banners
+Banner.belongsTo(User, { foreignKey: "created_by", as: "createdBy" }); // One Banner belongs to one User
+User.hasMany(Banner, { foreignKey: "created_by", as: "createdBy" });  // One User has many Banners
 
 // //relation defined for user and futsal one user can have only one futsal
 // User.hasOne(Futsal, { foreignKey: "owner_id" });
