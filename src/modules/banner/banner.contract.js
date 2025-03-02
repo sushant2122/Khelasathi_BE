@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 const bannerCreateDTO = Joi.object({
     title: Joi.string().min(3).max(50).required(),
-    image_url: Joi.string().required(),
+    image_url: Joi.string().optional(),//required(),
     link: Joi.string().uri().default(null),
     is_active: Joi.string().regex(/^(true|false)$/).default(true)
 });

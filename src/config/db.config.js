@@ -9,7 +9,7 @@ const { seedAdminUser } = require("../seeding/admin.seeding");
 const { createBannerModel } = require("../modules/banner/banner.model");
 const { createServiceModel } = require("../modules/service/service.model");
 const { createTagModel } = require("../modules/tag/tag.model");
-// const { createFutsalModel } = require("../modules/futsal/futsal.model");
+const { createFutsalModel } = require("../modules/futsal/futsal.model");
 // const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 // const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
 // const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
@@ -33,7 +33,7 @@ const User = createUserModel(sequelize);
 const Banner = createBannerModel(sequelize);
 const Service = createServiceModel(sequelize);
 const Tag = createTagModel(sequelize);
-// const Futsal = createFutsalModel(sequelize);
+const Futsal = createFutsalModel(sequelize);
 // const Credit_setting = createCreditSettingModel(sequelize);
 // const Futsal_image = createFutsalImgModel(sequelize);
 // const Tag = createTagModel(sequelize);
@@ -51,8 +51,8 @@ Banner.belongsTo(User, { foreignKey: "created_by", as: "createdBy" }); // One Ba
 User.hasMany(Banner, { foreignKey: "created_by", as: "createdBy" });  // One User has many Banners
 
 // //relation defined for user and futsal one user can have only one futsal
-// User.hasOne(Futsal, { foreignKey: "owner_id" });
-// Futsal.belongsTo(User, { foreignKey: "owner_id" });
+User.hasOne(Futsal, { foreignKey: "owner_id" });
+Futsal.belongsTo(User, { foreignKey: "owner_id" });
 
 // //relation defined for futsal and credit setting one to one one futsal have only one credit setting 
 // Futsal.hasOne(Credit_setting, { foreignKey: "futsal_id" });
@@ -106,8 +106,8 @@ module.exports = {
     Role,
     Banner,
     Service,
-    Tag
-    // Futsal,
+    Tag,
+    Futsal,
     // Credit_setting,
     // Futsal_image,
     // Tag,
