@@ -13,6 +13,12 @@ const futsalSchema = {
     description: {
         type: DataTypes.TEXT
     },
+    slug: {
+        type: DataTypes.STRING(255),
+        unique: true,
+        allowNull: false,
+
+    },
     location: {
         type: DataTypes.STRING(255)
     },

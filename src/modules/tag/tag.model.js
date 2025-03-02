@@ -9,6 +9,10 @@ const tagSchema = {
         type: DataTypes.STRING(100),
         allowNull: false,
         unique: true
+    },
+    is_available: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 
 };

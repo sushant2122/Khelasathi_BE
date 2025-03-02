@@ -1,7 +1,8 @@
-const { fileDelete } = require("../../utilities/helper");
-const { bannerSvc } = require("./banner.service")
+
+
 const { Op } = require("sequelize"); // Import Sequelize operators
-class BannerController {
+const { serviceSvc } = require("./service.service");
+class ServiceController {
     /**
      *  * this function is used to show the banners by logged in user
      * @param {import ("express").Request} req 
@@ -22,7 +23,7 @@ class BannerController {
                 filter = {
                     ...filter,
                     [Op.or]: [
-                        { title: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
+                        { name: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
                     ]
                 };
             }
@@ -36,7 +37,7 @@ class BannerController {
             }
 
             // Fetch the list and total count of banners
-            const { list, total } = await bannerSvc.listAllByFilter({ limit, offset, filter });
+            const { list, total } = await serviceSvc.listAllByFilter({ limit, offset, filter });
 
             // Check if the requested page exceeds the total available pages
             const totalPages = Math.ceil(total / limit);
@@ -56,8 +57,8 @@ class BannerController {
                     total,
                     totalpages: totalPages
                 },
-                message: "List all banners.",
-                status: "BANNER_LIST_SUCCESS"
+                message: "List all service.",
+                status: "SERVICE_LIST_SUCCESS"
             });
         } catch (exception) {
             next(exception);
@@ -75,47 +76,22 @@ class BannerController {
      */
     store = async (req, res, next) => {
         try {
-            const data = await bannerSvc.transformBannerData(req);
-            const banner = await bannerSvc.createBanner(data);
+            const data = req.body;
+            const service = await serviceSvc.createService(data);
             res.json({
-                result: banner,
+                result: service,
                 meta: null,
-                message: "Banner created successfully.",
-                status: "BANNER_CREATION_SUCCESS"
+                message: "service created successfully.",
+                status: "SERVICE_CREATION_SUCCESS"
             });
 
         } catch (exception) {
             next(exception)
 
-        } finally {
-            if (req.file) {
-                fileDelete(req.file.path);
-            }
         }
 
     }
-    /**
-     *  this function is used to show the details of the banner by logged in user
-     * @param {import ("express").Request} req 
-     *  * @param {import ("express").Response} res
-     *  * @param {import ("express").NextFunction} next
-     * @return {void} 
-    
-     */
-    show = async (req, res, next) => {
-        try {
-            const id = req.params.id;
-            const banner = await bannerSvc.getSingleBannerData({ banner_id: id });
-            res.json({
-                result: banner,
-                meta: null,
-                message: "Banner details.",
-                status: "BANNER_FOUND"
-            });
-        } catch (exception) {
-            next(exception)
-        }
-    }
+
     /**
      *  this function is used to update a banner data by the logged in admin user
      * @param {import ("express").Request} req 
@@ -127,22 +103,18 @@ class BannerController {
     update = async (req, res, next) => {
         try {
 
-            const banner_id = req.params.id;
-            const data = await bannerSvc.transformBannerData(req);
-            const banner = await bannerSvc.updateBanner(banner_id, data);
+            const service_id = req.params.id;
+            const data = req.body;
+            const service = await serviceSvc.updateService(service_id, data);
             res.json({
-                result: banner,
+                result: service,
                 meta: null,
-                message: "Banner updated successfully.",
-                status: "BANNER_UPDATE_SUCCESS"
+                message: "Service updated successfully.",
+                status: "SERVICE_UPDATE_SUCCESS"
             });
 
         } catch (exception) {
             next(exception)
-        } finally {
-            if (req.file) {
-                fileDelete(req.file.path);
-            }
         }
     }
     /**
@@ -156,12 +128,12 @@ class BannerController {
     remove = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const response = await bannerSvc.deleteBannerById(id);
+            const response = await serviceSvc.deleteServiceById(id);
             res.json({
                 result: response,
                 meta: null,
-                message: "Banner deleted successfully.",
-                status: "BANNER_DELETE_SUCCESS"
+                message: "Service deleted successfully.",
+                status: "SERVICE_DELETE_SUCCESS"
             });
 
         } catch (exception) {
@@ -176,12 +148,12 @@ class BannerController {
      * @return {void} 
     
      */
-    listForHome = async (req, res, next) => {
+    listForVenue = async (req, res, next) => {
         try {
             const filter = {
                 is_active: true
             }
-            const banner = await bannerSvc.listAllByFilter({
+            const service = await serviceSvc.listAllByFilter({
                 limit: 4,
                 offset: 0,
                 filter
@@ -189,10 +161,10 @@ class BannerController {
             }
             );
             res.json({
-                result: banner,
+                result: service,
                 meta: null,
-                message: "Banner for display.",
-                status: "BANNER_FETCHED"
+                message: "Service for display.",
+                status: "SERVICE_FETCHED"
             });
 
 
@@ -202,6 +174,6 @@ class BannerController {
     }
 
 }
-const bannerCtrl = new BannerController();
+const serviceCtrl = new ServiceController();
 
-module.exports = bannerCtrl;
+module.exports = serviceCtrl;

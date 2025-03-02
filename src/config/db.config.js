@@ -7,6 +7,8 @@ const { createUserModel } = require("../modules/user/user.model");
 const { seedRoles } = require("../seeding/role.seeding");
 const { seedAdminUser } = require("../seeding/admin.seeding");
 const { createBannerModel } = require("../modules/banner/banner.model");
+const { createServiceModel } = require("../modules/service/service.model");
+const { createTagModel } = require("../modules/tag/tag.model");
 // const { createFutsalModel } = require("../modules/futsal/futsal.model");
 // const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 // const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
@@ -29,6 +31,8 @@ const sequelize = new Sequelize(
 const Role = createRoleModel(sequelize);
 const User = createUserModel(sequelize);
 const Banner = createBannerModel(sequelize);
+const Service = createServiceModel(sequelize);
+const Tag = createTagModel(sequelize);
 // const Futsal = createFutsalModel(sequelize);
 // const Credit_setting = createCreditSettingModel(sequelize);
 // const Futsal_image = createFutsalImgModel(sequelize);
@@ -101,6 +105,8 @@ module.exports = {
     User,
     Role,
     Banner,
+    Service,
+    Tag
     // Futsal,
     // Credit_setting,
     // Futsal_image,

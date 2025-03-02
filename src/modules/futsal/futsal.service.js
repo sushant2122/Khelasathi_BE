@@ -1,23 +1,27 @@
+const slugify = require("slugify");
 const { Banner, User } = require("../../config/db.config");
 const { uploadHelper } = require("../../utilities/helper")
 
-class BannerService {
+class FutsalService {
 
     transformBannerData = async (req) => {
         const data = req.body;
+        console.log(data);
+
         data.created_by = req.authUser.user_id;
+        data.slug = slugify(data.name, { lower: true });
+
         if (req.file) {
             data.image_url = await uploadHelper(req.file.path, 'banners');
         }
-        else {
-            delete data.image_url
-        }
+
         return data;
     }
     createBanner = async (data) => {
         try {
             const newBanner = await Banner.create(data);
             return newBanner;
+
         } catch (exception) {
             throw exception;
         }
@@ -82,7 +86,7 @@ class BannerService {
             }
 
             // Now update the banner with the new data
-            const updatedBanner = await Banner.update(data);
+            const updatedBanner = await banner.update(data);
 
             return updatedBanner;
 
@@ -114,5 +118,5 @@ class BannerService {
 
 
 }
-const bannerSvc = new BannerService();
-module.exports = { bannerSvc };
+const futsalSvc = new FutsalService();
+module.exports = { futsalSvc };

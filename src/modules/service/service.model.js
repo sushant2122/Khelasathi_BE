@@ -16,11 +16,11 @@ const serviceSchema = {
     }
 };
 
-const createserviceModel = (sequelize) => {
+const createServiceModel = (sequelize) => {
     const Service = sequelize.define('Services', serviceSchema);
     return Service;
 };
 
 module.exports = {
-    createserviceModel
+    createServiceModel
 };
