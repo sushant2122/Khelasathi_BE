@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-const futsalMerchantPaymentSchema = {
+const futsalMerchantSchema = {
     payment_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -37,10 +37,10 @@ const futsalMerchantPaymentSchema = {
 };
 
 // Function to create the model with a unique constraint on (futsal_id, service_id)
-const createFutsalMerchantPaymentModel = (sequelize) => {
-    const FutsalMerchantPayment = sequelize.define(
-        'Futsal_merchant_payments',
-        futsalMerchantPaymentSchema,
+const createFutsalMerchantModel = (sequelize) => {
+    const FutsalMerchant = sequelize.define(
+        'Futsal_merchants',
+        futsalMerchantSchema,
         {
             indexes: [
                 {
@@ -50,9 +50,9 @@ const createFutsalMerchantPaymentModel = (sequelize) => {
             ]
         }
     );
-    return FutsalMerchantPayment;
+    return FutsalMerchant;
 };
 
 module.exports = {
-    createFutsalMerchantPaymentModel
+    createFutsalMerchantModel
 };

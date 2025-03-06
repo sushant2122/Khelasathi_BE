@@ -12,11 +12,16 @@ class FutsalService {
         data.slug = slugify(data.name, { lower: true });
 
 
-        if (req.files) {
+
+        if (req.files && req.files.citizenship_front_url && req.files.citizenship_front_url[0]) {
+
             data.citizenship_front_url = await uploadHelper(req.files.citizenship_front_url[0].path, 'futsals');
             data.citizenship_back_url = await uploadHelper(req.files.citizenship_back_url[0].path, 'futsals');
-
+        } else {
+            // Handle the case where no file is uploaded for this field
+            throw { code: 404, message: "File  not found.", status: "FILE_NOT_FOUND" };
         }
+
         return data;
     };
 
@@ -26,32 +31,45 @@ class FutsalService {
         data.verification_date = new Date();
         return data;
     };
-
-    createFutsal = async (data) => {
+    createFutsal = async (data, req) => {
         try {
+            // Check if the futsal with the same slug already exists
             const existingData = await Futsal.findOne({
                 where: { slug: data.slug }
             });
 
-            if (existingData) {
-                // If email exists, pass error to next middleware
-                const detail = { slug: data.slug + " already exists. please enter a different futsal name." }; // Prepare details for the error response
-                const error = new Error('Futsal with this name  already exists.');
-                error.code = 400; // Custom HTTP status for this error
-                error.detail = detail;
-                error.status = "FUTSAL_ALREADY_EXISTS";
-                // Add extra details for the error
-                throw error; // Pass the error to Express's error handler
+            // Check if the user already has a registered futsal (only for users with role 'Venue')
+            const FutsalRegistered = await Futsal.findOne({
+                where: { owner_id: req.authUser.user_id }
+            });
+
+            // If a futsal is already registered, throw an error
+            if (FutsalRegistered && req.authUser.role_title === 'Venue') {
+                throw {
+                    code: 400,
+                    detail: "Futsal already registered from this account.",
+                    status: "FUTSAL_CAN_NOT_BE_REGISTERED"
+                };
             }
 
+            // If futsal with the same slug exists, throw an error
+            if (existingData) {
+                throw {
+                    code: 400,
+                    detail: { slug: `${data.slug} already exists. Please enter a different futsal name.` },
+                    status: "FUTSAL_ALREADY_EXISTS"
+                };
+            }
+
+            // Create new futsal if no issues
             const newFutsal = await Futsal.create(data);
             return newFutsal;
 
         } catch (exception) {
             throw exception;
         }
+    };
 
-    }
     listAllByFilter = async ({ limit = 10, offset = 0, filter = {} }) => {
         try {
             const total = await Futsal.count({

@@ -1,20 +1,10 @@
-const { fileDelete } = require("../../utilities/helper");
-const { futsalSvc } = require("./futsal.service")
+
+const { merchantSvc } = require("./futsal_merchant.service")
 const { Op } = require("sequelize"); // Import Sequelize operators
-class FutsalController {
-    /**
-     *  * this function is used to show the Futsals by logged in user
-     * @param {import ("express").Request} req 
-     *  * @param {import ("express").Response} res
-     *  * @param {import ("express").NextFunction} next
-     * @return {void} 
-    
-     */
+class FutsalMerchantController {
+
     index = async (req, res, next) => {
         try {
-            let page = +req.query.page || 1;
-            let limit = +req.query.limit || 10;
-            let offset = (page - 1) * limit; // `offset` in Sequelize is equivalent to `skip`
 
             let filter = {};
 
@@ -36,17 +26,8 @@ class FutsalController {
             }
 
             // Fetch the list and total count of futsalss
-            const { list, total } = await futsalSvc.listAllByFilter({ limit, offset, filter });
+            const { list } = await merchantSvc.listAllByFilter({ filter });
 
-            // Check if the requested page exceeds the total available pages
-            const totalPages = Math.ceil(total / limit);
-            if (page > totalPages) {
-                return next({
-                    code: 404,
-                    message: "No data to load for the requested page.",
-                    status: "PAGINATION_ERROR"
-                });
-            }
 
             res.json({
                 result: list,
@@ -76,8 +57,8 @@ class FutsalController {
     store = async (req, res, next) => {
 
         try {
-            const data = await futsalSvc.transformFutsalData(req);
-            const futsal = await futsalSvc.createFutsal(data, req);
+            const data = await merchantSvc.transformFutsalData(req);
+            const futsal = await merchantSvc.createFutsal(data, req);
             res.json({
                 result: futsal,
                 meta: null,
@@ -88,18 +69,6 @@ class FutsalController {
         } catch (exception) {
             next(exception)
 
-        } finally {
-            if (req.files) {
-                if (req.files && req.files.citizenship_front_url && req.files.citizenship_front_url[0]) {
-                    // File exists, proceed to delete it
-                    fileDelete(req.files.citizenship_front_url[0].path);
-                    fileDelete(req.files.citizenship_back_url[0].path);
-                } else {
-                    // Handle the case where no file is uploaded for this field
-                    next({ code: 404, message: "File  not found.", status: "FILE_NOT_FOUND" })
-                }
-
-            }
         }
 
     }
@@ -114,7 +83,7 @@ class FutsalController {
     show = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const futsal = await futsalSvc.getSingleFutsalData({ futsal_id: id });
+            const futsal = await merchantSvc.getSingleFutsalData({ futsal_id: id });
             res.json({
                 result: futsal,
                 meta: null,
@@ -137,8 +106,8 @@ class FutsalController {
         try {
 
             const futsal_id = req.params.id;
-            const data = await futsalSvc.transformFutsalUpdateData(req);
-            const futsal = await futsalSvc.updateFutsal(futsal_id, data);
+            const data = await merchantSvc.transformFutsalUpdateData(req);
+            const futsal = await merchantSvc.updateFutsal(futsal_id, data);
             res.json({
                 result: futsal,
                 meta: null,
@@ -161,7 +130,7 @@ class FutsalController {
     remove = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const response = await futsalSvc.deleteFutsalById(id);
+            const response = await merchantSvc.deleteFutsalById(id);
             res.json({
                 result: response,
                 meta: null,
@@ -187,7 +156,7 @@ class FutsalController {
                 is_active: true,
                 verification_status: "approved"
             }
-            const futsal = await futsalSvc.listAllByFilter({
+            const futsal = await merchantSvc.listAllByFilter({
                 limit: 4,
                 offset: 0,
                 filter
@@ -209,7 +178,7 @@ class FutsalController {
     showForHome = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const futsal = await futsalSvc.getSingleFutsalData({ futsal_id: id, is_active: true, verification_status: "approved" });
+            const futsal = await merchantSvc.getSingleFutsalData({ futsal_id: id, is_active: true, verification_status: "approved" });
             res.json({
                 result: futsal,
                 meta: null,
@@ -225,8 +194,8 @@ class FutsalController {
         try {
 
             const futsal_id = req.params.id;
-            const data = await futsalSvc.transformFutsalVerifyData(req);
-            const futsal = await futsalSvc.updateFutsal(futsal_id, data);
+            const data = await merchantSvc.transformFutsalVerifyData(req);
+            const futsal = await merchantSvc.updateFutsal(futsal_id, data);
             res.json({
                 result: futsal,
                 meta: null,
@@ -240,6 +209,6 @@ class FutsalController {
     }
 
 }
-const futsalCtrl = new FutsalController();
+const merchantCtrl = new FutsalMerchantController();
 
-module.exports = futsalCtrl;
+module.exports = merchantCtrl;
