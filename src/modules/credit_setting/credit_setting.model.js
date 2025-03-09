@@ -8,11 +8,7 @@ const creditSettingSchema = {
     },
     futsal_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Futsal,
-            key: 'futsal_id'
-        }
+        allowNull: false
     },
     credit_points_required_for_hour: {
         type: DataTypes.INTEGER,

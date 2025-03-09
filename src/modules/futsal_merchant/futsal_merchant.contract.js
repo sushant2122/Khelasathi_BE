@@ -13,3 +13,8 @@ const futsalMerchantUpdateDTO = Joi.object({
     payment_client_secret: Joi.string().min(3).max(50).required(),
     is_active: Joi.string().regex(/^(true|false)$/).default(true)
 });
+
+module.exports = {
+    futsalMerchantCreateDTO, futsalMerchantUpdateDTO
+
+}

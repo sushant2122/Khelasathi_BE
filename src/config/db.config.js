@@ -11,7 +11,7 @@ const { createServiceModel } = require("../modules/service/service.model");
 const { createTagModel } = require("../modules/tag/tag.model");
 const { createFutsalModel } = require("../modules/futsal/futsal.model");
 const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
-// const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
+const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 // const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
 // const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
 // const { createTagModel } = require("../modules/tag/tag.model");
@@ -35,7 +35,7 @@ const Banner = createBannerModel(sequelize);
 const Service = createServiceModel(sequelize);
 const Tag = createTagModel(sequelize);
 const Futsal = createFutsalModel(sequelize);
-// const Credit_setting = createCreditSettingModel(sequelize);
+const Credit_setting = createCreditSettingModel(sequelize);
 // const Futsal_image = createFutsalImgModel(sequelize);
 // const Tag = createTagModel(sequelize);
 // const Futsal_tag = createFutsalTagModel(sequelize);
@@ -56,8 +56,8 @@ User.hasOne(Futsal, { foreignKey: "owner_id" });
 Futsal.belongsTo(User, { foreignKey: "owner_id" });
 
 // //relation defined for futsal and credit setting one to one one futsal have only one credit setting 
-// Futsal.hasOne(Credit_setting, { foreignKey: "futsal_id" });
-// Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
+Futsal.hasOne(Credit_setting, { foreignKey: "futsal_id" });
+Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
 
 
 // //relation defined between futsal and futsla image one futsal can have many images 
@@ -76,8 +76,6 @@ FutsalMerchant.belongsTo(Futsal, { foreignKey: "futsal_id" });
 // //  One Service can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
 Service.hasMany(FutsalMerchant, { foreignKey: "service_id" });
 FutsalMerchant.belongsTo(Service, { foreignKey: "service_id" });
-
-
 
 const initDb = async () => {
     try {
@@ -109,8 +107,8 @@ module.exports = {
     Service,
     Tag,
     Futsal,
-    FutsalMerchant
-    // Credit_setting,
+    FutsalMerchant,
+    Credit_setting,
     // Futsal_image,
     // Tag,
     // Futsal_tag

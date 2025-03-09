@@ -3,19 +3,11 @@ const { DataTypes } = require("sequelize");
 const futsalTagSchema = {
     futsal_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'Futsals',
-            key: 'futsal_id'
-        }
+        allowNull: false
     },
     tag_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'Tags',
-            key: 'tag_id'
-        }
+        allowNull: false
     }
 };
 

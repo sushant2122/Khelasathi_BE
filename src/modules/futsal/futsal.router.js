@@ -19,7 +19,7 @@ futsalRouter.route('/')
         ]), bodyValidator(futsalCreateDTO), futsalCtrl.store)
 futsalRouter.route("/:id")
     .get(loginCheck, checkAccess(['Admin', 'Venue']), futsalCtrl.show)
-    .put(loginCheck, checkAccess(['Admin', 'Venue']), bodyValidator(futsalUpdateDTO), futsalCtrl.update) //this will work for approving the futsals by admin as well so didn't made another route
+    .put(loginCheck, checkAccess(['Admin', 'Venue']), bodyValidator(futsalUpdateDTO), futsalCtrl.update)
     .delete(loginCheck, checkAccess('Admin'), futsalCtrl.remove)
 
 module.exports = futsalRouter;

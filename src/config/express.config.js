@@ -1,27 +1,20 @@
 require("dotenv").config();
 const express = require('express');
-require("./db.config")
-const router = require('./router.config')
-const app = express()
-//json parser
-app.use(express.json()); //it will recieve the json data
-app.use(express.urlencoded({ //for recieveing urlencoded data 
+require("./db.config");
+const router = require('./router.config');
+const app = express();
+
+// json parser
+app.use(express.json()); // it will receive the json data
+app.use(express.urlencoded({ // for receiving urlencoded data
     extended: false
-}))
-// app.use("/assets", express.static('./public/'))
-//form data can't be handled like this as it is route speicific
+}));
 
-//if we need to send it to all the five methods we can use use //accepts all the request
-app.use("/api/v1", router) //this is the rightway to define the route for versioning
+// Use versioned routes
+app.use("/api/v1", router); // this is the right way to define the route for versioning
 
-
-//if the url is not found this response is shown 
-//the argument passed in this next is catched by the error on the below function
-
-//error handling middleware
+// Error handling middleware
 app.use((error, req, res, next) => {
-
-
     let result = error.detail || null;
     let message = error.message || "Server error...";
     let status = error.status || "INTERNAL_SERVER_ERROR";
@@ -42,6 +35,7 @@ app.use((error, req, res, next) => {
         message = "Unexpected file format.";
         status = "LIMIT_UNEXPECTED_FILE";
     }
+
 
     res.status(code).json({
         result: result,
