@@ -12,9 +12,9 @@ const { createTagModel } = require("../modules/tag/tag.model");
 const { createFutsalModel } = require("../modules/futsal/futsal.model");
 const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
 const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
-// const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
+const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
 // const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
-// const { createTagModel } = require("../modules/tag/tag.model");
+
 
 
 const sequelize = new Sequelize(
@@ -36,7 +36,7 @@ const Service = createServiceModel(sequelize);
 const Tag = createTagModel(sequelize);
 const Futsal = createFutsalModel(sequelize);
 const Credit_setting = createCreditSettingModel(sequelize);
-// const Futsal_image = createFutsalImgModel(sequelize);
+const Futsal_image = createFutsalImgModel(sequelize);
 // const Tag = createTagModel(sequelize);
 // const Futsal_tag = createFutsalTagModel(sequelize);
 const FutsalMerchant = createFutsalMerchantModel(sequelize);
@@ -61,8 +61,8 @@ Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
 
 
 // //relation defined between futsal and futsla image one futsal can have many images 
-// Futsal_image.belongsTo(Futsal, { foreignKey: "futsal_id" });
-// Futsal.hasMany(Futsal_image, { foreignKey: "futsal_id" });
+Futsal_image.belongsTo(Futsal, { foreignKey: "futsal_id" });
+Futsal.hasMany(Futsal_image, { foreignKey: "futsal_id" });
 
 // //relation defined between futsal and tags through futsal tags table as it has many to many relationship
 // Futsal.belongsToMany(Tag, { through: Futsal_tag, foreignKey: "futsal_id" });
@@ -109,7 +109,7 @@ module.exports = {
     Futsal,
     FutsalMerchant,
     Credit_setting,
-    // Futsal_image,
+    Futsal_image,
     // Tag,
     // Futsal_tag
 

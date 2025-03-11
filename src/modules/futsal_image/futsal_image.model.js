@@ -6,7 +6,7 @@ const futsalImgSchema = {
         autoIncrement: true,
         primaryKey: true
     },
-    image_url: {
+    image: {
         type: DataTypes.STRING(255),
         allowNull: false
     },
@@ -17,10 +17,9 @@ const futsalImgSchema = {
     futsal_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: Futsals,
-            key: 'futsal_id'
-        }
+    }, is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 };
 const createFutsalImgModel = (sequelize) => {
