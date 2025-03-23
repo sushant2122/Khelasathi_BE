@@ -13,7 +13,13 @@ const { createFutsalModel } = require("../modules/futsal/futsal.model");
 const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
 const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
-// const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
+const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
+
+
+const { createFutsalCourtModel } = require("../modules/court/court.model");
+const { createSlotModel } = require("../modules/slot/slot.model");
+const { createSlotScheduleModel } = require("../modules/slot_schedule/slot_schedule.model");
+// const { createClosingDayModel } = require("../modules/closing_day/closing_day.model");
 
 
 
@@ -37,10 +43,12 @@ const Tag = createTagModel(sequelize);
 const Futsal = createFutsalModel(sequelize);
 const Credit_setting = createCreditSettingModel(sequelize);
 const Futsal_image = createFutsalImgModel(sequelize);
-// const Tag = createTagModel(sequelize);
-// const Futsal_tag = createFutsalTagModel(sequelize);
+const Futsal_tag = createFutsalTagModel(sequelize);
 const FutsalMerchant = createFutsalMerchantModel(sequelize);
-
+const Court = createFutsalCourtModel(sequelize);
+const Slot = createSlotModel(sequelize);
+const Slot_Schedule = createSlotScheduleModel(sequelize);
+// const Closing_day = createClosingDayModel(sequelize);
 
 
 //relation defined for user and role
@@ -64,9 +72,37 @@ Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
 Futsal_image.belongsTo(Futsal, { foreignKey: "futsal_id" });
 Futsal.hasMany(Futsal_image, { foreignKey: "futsal_id" });
 
+// //relation defined for futsal and court
+Court.belongsTo(Futsal, { foreignKey: "futsal_id" }); // One Banner belongs to one User
+Futsal.hasMany(Court, { foreignKey: "futsal_id" });  // One User has many Banners
+
+// //relation between court and slot 
+Slot.belongsTo(Court, { foreignKey: "court_id" }); // One Banner belongs to one User
+Court.hasMany(Slot, { foreignKey: "court_id" });  // One User has many Banners
+
+// //relation between Slot and slot schedule 
+Slot_Schedule.belongsTo(Slot, { foreignKey: "slot_id" }); // One Banner belongs to one User
+Slot.hasMany(Slot_Schedule, { foreignKey: "slot_id" });  // One User has many Banners
+
+// //relation between court and closing days
+// Closing_day.belongsTo(Court, { foreignKey: "court_id" }); // One Banner belongs to one User
+// Court.hasMany(Closing_day, { foreignKey: "court_id" });  // One User has many Banners
+
 // //relation defined between futsal and tags through futsal tags table as it has many to many relationship
-// Futsal.belongsToMany(Tag, { through: Futsal_tag, foreignKey: "futsal_id" });
-// Tag.belongsToMany(Futsal, { through: Futsal_tag, foreignKey: "tag_id" });
+// Define associations properly
+
+
+Futsal.belongsToMany(Tag, {
+    through: Futsal_tag,
+    foreignKey: "futsal_id",
+    otherKey: "tag_id"
+});
+
+Tag.belongsToMany(Futsal, {
+    through: Futsal_tag,
+    foreignKey: "tag_id",
+    otherKey: "futsal_id"
+});
 
 
 // //  One Futsal can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
@@ -83,7 +119,7 @@ const initDb = async () => {
         console.log("✅ Connected to PostgreSQL database.");
 
         // Sync database
-        await sequelize.sync();
+        await sequelize.sync({ alter: true });
 
         // Seed database
         await seedRoles(Role);
@@ -110,7 +146,10 @@ module.exports = {
     FutsalMerchant,
     Credit_setting,
     Futsal_image,
-    // Tag,
-    // Futsal_tag
+    Futsal_tag,
+    Court,
+    Slot,
+    Slot_Schedule,
+    // Closing_day
 
 };
