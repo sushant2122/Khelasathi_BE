@@ -5,7 +5,7 @@ class FutsalTagService {
     transformFutsalTagDetails = async (req) => {
         const data = req.body;
         if (req.authUser.futsal_id) {
-            data.futsal_id = req.authUser.futsal_id;
+            data.FutsalFutsalId = req.authUser.futsal_id;
             return data;
         } else {
             throw { code: 400, message: "Futsal  not registered by the user", status: "FUTSAL_NOT_REGISTERED" };

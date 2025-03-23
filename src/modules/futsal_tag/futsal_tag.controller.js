@@ -5,12 +5,12 @@ class FutsalTagController {
     index = async (req, res, next) => {
         try {
             // Get filter from query parameters
-            const filter = { futsal_id: req.authUser.futsal_id };
+            const filter = { FutsalFutsalId: req.authUser.futsal_id };
 
             // Pass the filter to the service function
             const futsalTag = await futsalTagSvc.listAllByFilter(filter);
 
-            res.json({ result: merchants, meta: null, message: "List of futsal tags.", status: "FUTSAL_TAG_LIST_SUCCESS" });
+            res.json({ result: futsalTag, meta: null, message: "List of futsal tags.", status: "FUTSAL_TAG_LIST_SUCCESS" });
         } catch (error) {
             next(error);
         }

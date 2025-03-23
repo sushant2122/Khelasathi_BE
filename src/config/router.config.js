@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const authRouter = require("../modules/auth/auth.router");  // This is your authRouter
 const bannerRouter = require('../modules/banner/banner.router');
+const closingDayRouter = require('../modules/closing_day/closing_day.router');
 const CourtRouter = require('../modules/court/court.router');
 const creditSettingRouter = require('../modules/credit_setting/credit_setting.router');
 const futsalRouter = require('../modules/futsal/futsal.router');
@@ -40,6 +41,8 @@ router.use('/court', CourtRouter);
 router.use('/slot', slotRouter)
 
 router.use('/slot-schedule', slotScheduleRouter)
+
+router.use('/closing-day', closingDayRouter);
 
 // Default route
 router.use("/", (req, res) => {
