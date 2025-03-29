@@ -28,6 +28,12 @@ const createSlotDTO = Joi.object({
         "number.min": "Price cannot be negative",
         "any.required": "Price is required"
     }),
+    credit_point: Joi.number().integer().min(0).required().messages({
+        "number.base": "credit point req must be a number",
+        "number.integer": "credit point  must be an integer",
+        "number.min": "credit point  cannot be negative",
+        "any.required": "credit point  is required"
+    }),
     is_active: Joi.string().regex(/^(true|false)$/).default(false),
 });
 
@@ -49,6 +55,12 @@ const updateSlotDTO = Joi.object({
         "number.base": "Price must be a number",
         "number.integer": "Price must be an integer",
         "number.min": "Price cannot be negative"
+    }),
+    credit_point: Joi.number().integer().min(0).required().messages({
+        "number.base": "credit point req must be a number",
+        "number.integer": "credit point  must be an integer",
+        "number.min": "credit point  cannot be negative",
+        "any.required": "credit point  is required"
     }),
     is_active: Joi.string().regex(/^(true|false)$/).default(false),
 });

@@ -2,6 +2,12 @@
 const { Tag } = require("../../config/db.config");
 
 class TagService {
+    transformTagData = (req) => {
+        const data = req.body;
+        data.futsal_id = req.authUser.futsal_id;
+        return data;
+
+    }
 
     createTag = async (data) => {
         try {

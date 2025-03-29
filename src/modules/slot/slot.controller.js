@@ -1,6 +1,7 @@
 
 const { Op } = require("sequelize"); // Import Sequelize operators
 const { slotSvc } = require("./slot.service");
+const { sequelize } = require("../../config/db.config");
 class SlotController {
     /**
      *  * this function is used to show the banners by logged in user
@@ -155,20 +156,63 @@ class SlotController {
      */
     listForHome = async (req, res, next) => {
         try {
-            const filter = { is_active: true }
-            const slot = await slotSvc.listAllByFilter(filter);
+            const { courtId, date } = req.query;
+
+            if (!courtId || !date) {
+                return res.status(400).json({
+                    result: null,
+                    message: "Missing required parameters: courtId and date.",
+                    status: "BAD_REQUEST"
+                });
+            }
+
+            const query = `
+                SELECT s.slot_id, s.title, s.start_time, s.end_time, s.price,s.credit_point
+                FROM "Slots" s
+                LEFT JOIN "Booked_slots" bs 
+                    ON s.slot_id = bs.slot_id 
+                    AND bs.booking_id IN (
+                        SELECT booking_id 
+                        FROM "Bookings" 
+                        WHERE booking_date = :date
+                    )
+                LEFT JOIN "Closing_days" cd 
+                    ON s.court_id = cd.court_id 
+                    AND cd.date = :date
+                WHERE s.court_id = :courtId
+                AND s.is_active = TRUE
+                AND bs.booked_slot_id IS NULL 
+                AND cd.closing_day_id IS NULL 
+                ORDER BY s.start_time; 
+            `;
+
+            // Use just the results, not metadata for SELECT queries
+            const results = await sequelize.query(query, {
+                replacements: { courtId, date },
+                type: sequelize.QueryTypes.SELECT
+            });
+
+            if (!results || results.length === 0) {
+                return res.status(404).json({
+                    result: null,
+                    message: "No available slots for the selected court and date.",
+                    status: "NOT_FOUND"
+                });
+            }
+
             res.json({
-                result: slot,
+                result: results,
                 meta: null,
-                message: "slot for display.",
+                message: "Available slots fetched.",
                 status: "SLOT_FETCHED"
             });
 
-
         } catch (exception) {
-            next(exception)
+            next(exception);
         }
-    }
+    };
+
+
 
 }
 const slotCtrl = new SlotController();

@@ -8,7 +8,10 @@ const tagSchema = {
     tagname: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true
+    },
+    futsal_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
     is_available: {
         type: DataTypes.BOOLEAN,

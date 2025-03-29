@@ -17,13 +17,13 @@ class tagController {
             let limit = +req.query.limit || 10;
             let offset = (page - 1) * limit; // `offset` in Sequelize is equivalent to `skip`
 
-            let filter = {};
+            let filter = { futsal_id: req.authUser.futsal_id };
 
             if (req.query.search) {
                 filter = {
                     ...filter,
                     [Op.or]: [
-                        { name: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
+                        { tagname: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
                     ]
                 };
             }
@@ -76,7 +76,8 @@ class tagController {
      */
     store = async (req, res, next) => {
         try {
-            const data = req.body;
+            const data = tagSvc.transformTagData(req);
+            console.log(data);
             const tag = await tagSvc.createTag(data);
             res.json({
                 result: tag,
@@ -148,9 +149,11 @@ class tagController {
      * @return {void} 
     
      */
-    listForVenue = async (req, res, next) => {
+    listForHome = async (req, res, next) => {
         try {
+            const futsal_id = req.params.id;
             const filter = {
+                futsal_id: futsal_id,
                 is_available: true
             }
             const tag = await tagSvc.listAllByFilter({

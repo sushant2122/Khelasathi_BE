@@ -8,19 +8,18 @@ const { seedRoles } = require("../seeding/role.seeding");
 const { seedAdminUser } = require("../seeding/admin.seeding");
 const { createBannerModel } = require("../modules/banner/banner.model");
 const { createServiceModel } = require("../modules/service/service.model");
-const { createTagModel } = require("../modules/tag/tag.model");
+const { createTagModel } = require("../modules/tag/tag.model"); //
 const { createFutsalModel } = require("../modules/futsal/futsal.model");
 const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
 const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
-
-
 const { createFutsalCourtModel } = require("../modules/court/court.model");
 const { createSlotModel } = require("../modules/slot/slot.model");
-const { createSlotScheduleModel } = require("../modules/slot_schedule/slot_schedule.model");
 const { createClosingDayModel } = require("../modules/closing_day/closing_day.model");
-const { createFutsalTagModel } = require("../modules/futsal_tag/futsal_tag.model");
-
+const { createBookingModel } = require("../modules/booking/booking.model");
+const { createBookedSlotModel } = require("../modules/booked_slots/booked_slots.model");
+const { createTransactionModel } = require("../modules/transaction/transaction.model");
+const { createCreditPointModel } = require("../modules/credit_point/credit_point.model");
 
 const sequelize = new Sequelize(
     process.env.PG_DATABASE,
@@ -45,8 +44,11 @@ const Futsal_image = createFutsalImgModel(sequelize);
 const FutsalMerchant = createFutsalMerchantModel(sequelize);
 const Court = createFutsalCourtModel(sequelize);
 const Slot = createSlotModel(sequelize);
-const Slot_Schedule = createSlotScheduleModel(sequelize);
 const Closing_day = createClosingDayModel(sequelize);
+const Booking = createBookingModel(sequelize);
+const Booked_slot = createBookedSlotModel(sequelize);
+const Transaction = createTransactionModel(sequelize);
+const Credit_point = createCreditPointModel(sequelize);
 
 //relation defined for user and role
 User.belongsTo(Role, { foreignKey: "role_title" });  // User belongs to Role
@@ -77,19 +79,14 @@ Futsal.hasMany(Court, { foreignKey: "futsal_id" });  // One User has many Banner
 Slot.belongsTo(Court, { foreignKey: "court_id" }); // One Banner belongs to one User
 Court.hasMany(Slot, { foreignKey: "court_id" });  // One User has many Banners
 
-// //relation between Slot and slot schedule 
-Slot_Schedule.belongsTo(Slot, { foreignKey: "slot_id" }); // One Banner belongs to one User
-Slot.hasMany(Slot_Schedule, { foreignKey: "slot_id" });  // One User has many Banners
-
 // //relation between court and closing days
 Closing_day.belongsTo(Court, { foreignKey: "court_id" }); // One Banner belongs to one User
 Court.hasMany(Closing_day, { foreignKey: "court_id" });  // One User has many Banners
 
 // //relation defined between futsal and tags through futsal tags table as it has many to many relationship
 // Define associations properly
-const Futsal_tag = sequelize.define('FutsalTags', {}, { timestamps: false });
-Futsal.belongsToMany(Tag, { through: 'FutsalTags' });
-Tag.belongsToMany(Futsal, { through: 'FutsalTags' });
+Futsal.hasMany(Tag, { foreignKey: "futsal_id" });
+Tag.belongsTo(Futsal, { foreignKey: "futsal_id" });
 
 // //  One Futsal can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
 Futsal.hasMany(FutsalMerchant, { foreignKey: "futsal_id" });
@@ -98,6 +95,30 @@ FutsalMerchant.belongsTo(Futsal, { foreignKey: "futsal_id" });
 // //  One Service can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
 Service.hasMany(FutsalMerchant, { foreignKey: "service_id" });
 FutsalMerchant.belongsTo(Service, { foreignKey: "service_id" });
+
+Transaction.belongsTo(Booking, { foreignKey: "booking_id" });
+Booking.hasOne(Transaction, { foreignKey: "booking_id" });
+
+Credit_point.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Credit_point, { foreignKey: "user_id" });
+
+Booked_slot.belongsTo(Booking, { foreignKey: "booking_id" });
+Booking.hasMany(Booked_slot, {
+    foreignKey: "booking_id",
+    as: 'booked_slots'  // Add this to match your include
+});
+
+// Fix the Slot association (was using booking_id incorrectly):
+Booked_slot.belongsTo(Slot, { foreignKey: "slot_id" });
+Slot.hasMany(Booked_slot, { foreignKey: "slot_id" });
+
+// User association is correct:
+Booking.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Booking, { foreignKey: "user_id" });
+
+Credit_point.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Credit_point, { foreignKey: "user_id" });
+
 
 const initDb = async () => {
     try {
@@ -132,10 +153,12 @@ module.exports = {
     FutsalMerchant,
     Credit_setting,
     Futsal_image,
-    Futsal_tag,
     Court,
     Slot,
-    Slot_Schedule,
-    Closing_day
+    Closing_day,
+    Booking,
+    Booked_slot,
+    Transaction,
+    Credit_point
 
 };

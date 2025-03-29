@@ -30,6 +30,10 @@ const SlotSchema = {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    credit_point: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
