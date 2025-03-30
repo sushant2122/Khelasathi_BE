@@ -20,10 +20,6 @@ const transactionSchema = {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    redeemed_points: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
-    },
     payment_session_id: {
         type: DataTypes.STRING,
         allowNull: false

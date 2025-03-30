@@ -1,5 +1,5 @@
 // booking.service.js
-const { Booking, Booked_slot, Slot } = require("../../config/db.config");
+const { Booking, Booked_slot, } = require("../../config/db.config");
 const { creditSvc } = require("../credit_point/credit_point.service");
 const { transactionSvc } = require("../transaction/transaction.service");
 
@@ -177,7 +177,7 @@ class BookingService {
                 is_paid: data.is_paid || false,
                 total_amount,
                 total_points_collected: total_points,
-                status: data.status || 'pending'
+                status: 'pending'
             }, { transaction: t });
 
             // Create booked slots
@@ -190,16 +190,6 @@ class BookingService {
 
             await Booked_slot.bulkCreate(bookedSlots, { transaction: t });
 
-            // Create credit point record (without foreign key)
-            // await Credit_point.create({
-            //     user_id: data.user_id,
-            //     credit_session_id: `booking-${newBooking.booking_id}`,
-            //     transaction_type: "earned",
-            //     credit_amount: total_points,
-            //     transaction_date: new Date(),
-            //     remarks: `Points from booking ${newBooking.booking_id}`
-            // }, { transaction: t });
-
             await creditSvc.earnPoint(data.user_id, newBooking.booking_id, total_points, { transaction: t });
 
             //for payment integration 
@@ -210,8 +200,8 @@ class BookingService {
                 "purchase_order_id": newBooking.booking_id,
                 "purchase_order_name": `Booking-${newBooking.booking_id}`,
             }
-            transactionSvc.callKhalti(formdata, req, res);
 
+            const transactiondetails = await transactionSvc.callKhalti(formdata);
 
             // Get complete booking details
             const completeBooking = await Booking.findByPk(newBooking.booking_id, {
@@ -228,6 +218,7 @@ class BookingService {
             return {
                 ...completeBooking.toJSON(),
                 points_earned: total_points,
+                payment_link: transactiondetails,
                 message: "Booking created successfully"
             };
         } catch (exception) {
@@ -242,45 +233,49 @@ class BookingService {
         }
     };
 
-
-
-    listAllByFilter = async ({ limit = 10, offset = 0, filter = {} }) => {
-        try {
-            const total = await Booking.count({
-                where: filter
-            });
-            const list = await Booking.findAll({
-                where: filter,
-                include: [{
-                    model: Booked_slot,
-                    as: 'booked_slots' // make sure this matches your association
-                }],
-                order: [['createdAt', 'DESC']],
-                limit: limit,
-                offset: offset
-            });
-            return { list, total };
-        } catch (exception) {
-            throw exception;
-        }
-    };
-    //for venue owner
-    updateBooking = async (bookingId, data) => {
+    updateBooking = async (bookingId, status, paidstatus) => {
         try {
             const booking = await Booking.findByPk(bookingId);
             if (!booking) {
-                throw { code: 400, message: "Booking not found", status: "BOOKING_NOT_FOUND" };
+                throw {
+                    code: 404,  // Changed from 400 to 404 for "Not Found"
+                    message: "Booking not found",
+                    status: "BOOKING_NOT_FOUND"
+                };
             }
-            const updatedBooking = await booking.update(data);
+
+            const updatedBooking = await booking.update({
+                status: status,
+                is_paid: paidstatus,
+
+            });
+
             return updatedBooking;
-        } catch (exception) {
-            throw exception;
+        } catch (error) {
+            console.error('Error updating booking:', error);
+            throw {
+                code: 500,
+                message: "Failed to update booking",
+                status: "UPDATE_FAILED",
+                error: error.message
+            };
         }
     }
     //cancel booking for the user 
     cancelBooking = async () => {
 
     }
+
+    listAllByFilter = async (filter = {}) => {
+        try {
+
+            const list = await Booking.findAll({ where: filter }); // Debugging log
+
+            return { list };
+        } catch (exception) {
+            throw exception;
+        }
+    };
 
     // Add other methods as needed
 }

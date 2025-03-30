@@ -11,7 +11,6 @@ const { createServiceModel } = require("../modules/service/service.model");
 const { createTagModel } = require("../modules/tag/tag.model"); //
 const { createFutsalModel } = require("../modules/futsal/futsal.model");
 const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
-const { createCreditSettingModel } = require("../modules/credit_setting/credit_setting.model");
 const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
 const { createFutsalCourtModel } = require("../modules/court/court.model");
 const { createSlotModel } = require("../modules/slot/slot.model");
@@ -20,7 +19,6 @@ const { createBookingModel } = require("../modules/booking/booking.model");
 const { createBookedSlotModel } = require("../modules/booked_slots/booked_slots.model");
 const { createTransactionModel } = require("../modules/transaction/transaction.model");
 const { createCreditPointModel } = require("../modules/credit_point/credit_point.model");
-
 const sequelize = new Sequelize(
     process.env.PG_DATABASE,
     process.env.PG_USER,
@@ -39,7 +37,6 @@ const Banner = createBannerModel(sequelize);
 const Service = createServiceModel(sequelize);
 const Tag = createTagModel(sequelize);
 const Futsal = createFutsalModel(sequelize);
-const Credit_setting = createCreditSettingModel(sequelize);
 const Futsal_image = createFutsalImgModel(sequelize);
 const FutsalMerchant = createFutsalMerchantModel(sequelize);
 const Court = createFutsalCourtModel(sequelize);
@@ -61,10 +58,6 @@ User.hasMany(Banner, { foreignKey: "created_by", as: "createdBy" });  // One Use
 // //relation defined for user and futsal one user can have only one futsal
 User.hasOne(Futsal, { foreignKey: "owner_id" });
 Futsal.belongsTo(User, { foreignKey: "owner_id" });
-
-// //relation defined for futsal and credit setting one to one one futsal have only one credit setting 
-Futsal.hasOne(Credit_setting, { foreignKey: "futsal_id" });
-Credit_setting.belongsTo(Futsal, { foreignKey: "futsal_id" });
 
 
 // //relation defined between futsal and futsla image one futsal can have many images 
@@ -151,7 +144,6 @@ module.exports = {
     Tag,
     Futsal,
     FutsalMerchant,
-    Credit_setting,
     Futsal_image,
     Court,
     Slot,

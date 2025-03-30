@@ -4,30 +4,24 @@ require("./db.config");
 const router = require('./router.config');
 const app = express();
 
-// json parser
-app.use(express.json()); // it will receive the json data
-app.use(express.urlencoded({ // for receiving urlencoded data
-    extended: false
-}));
+// Body parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Use versioned routes
-app.use("/api/v1", router); // this is the right way to define the route for versioning
+// Routes
+app.use("/api/v1", router);
 
-// Error handling middleware
+// Error handling (unchanged from your original)
 app.use((error, req, res, next) => {
     let result = error.detail || null;
     let message = error.message || "Server error...";
     let status = error.status || "INTERNAL_SERVER_ERROR";
     let code = error.code || 500;
 
-    // 🛑 Fix: Ensure `code` is a valid HTTP status
-    if (typeof code !== "number") {
-        code = 500; // Default to Internal Server Error
-    }
+    if (typeof code !== "number") code = 500;
 
-    // ✅ Handle Multer-specific errors
     if (error.code === "LIMIT_FILE_SIZE") {
-        code = 400; // Bad Request
+        code = 400;
         message = "File size exceeds the allowed limit.";
         status = "LIMIT_FILE_SIZE";
     } else if (error.code === "LIMIT_UNEXPECTED_FILE") {
@@ -35,7 +29,6 @@ app.use((error, req, res, next) => {
         message = "Unexpected file format.";
         status = "LIMIT_UNEXPECTED_FILE";
     }
-
 
     res.status(code).json({
         result: result,
