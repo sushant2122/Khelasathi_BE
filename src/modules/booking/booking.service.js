@@ -261,21 +261,35 @@ class BookingService {
             };
         }
     }
-    //cancel booking for the user 
-    cancelBooking = async () => {
-
-    }
-
-    listAllByFilter = async (filter = {}) => {
+    listAllByFilter = async ({ limit = 10, offset = 0, filter = {} }) => {
         try {
+            const total = await Booking.count({
+                where: filter
+            });
 
-            const list = await Booking.findAll({ where: filter }); // Debugging log
+            const list = await Booking.findAll({
+                where: filter,
+                order: [['booked_at', 'DESC']], // Sorting by createdAt descending
+                limit: limit,
+                offset: offset
+            });
 
-            return { list };
+            return { list, total };
         } catch (exception) {
             throw exception;
         }
     };
+
+    // listAllByFilter = async (filter = {}) => {
+    //     try {
+
+    //         const list = await Booking.findAll({ where: filter }); // Debugging log
+
+    //         return { list };
+    //     } catch (exception) {
+    //         throw exception;
+    //     }
+    // };
 
     // Add other methods as needed
 }

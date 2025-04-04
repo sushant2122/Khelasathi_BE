@@ -7,10 +7,8 @@ const { createUserModel } = require("../modules/user/user.model");
 const { seedRoles } = require("../seeding/role.seeding");
 const { seedAdminUser } = require("../seeding/admin.seeding");
 const { createBannerModel } = require("../modules/banner/banner.model");
-const { createServiceModel } = require("../modules/service/service.model");
 const { createTagModel } = require("../modules/tag/tag.model"); //
 const { createFutsalModel } = require("../modules/futsal/futsal.model");
-const { createFutsalMerchantModel } = require("../modules/futsal_merchant/futsal_merchant.model");
 const { createFutsalImgModel } = require("../modules/futsal_image/futsal_image.model");
 const { createFutsalCourtModel } = require("../modules/court/court.model");
 const { createSlotModel } = require("../modules/slot/slot.model");
@@ -34,11 +32,11 @@ const sequelize = new Sequelize(
 const Role = createRoleModel(sequelize);
 const User = createUserModel(sequelize);
 const Banner = createBannerModel(sequelize);
-const Service = createServiceModel(sequelize);
+
 const Tag = createTagModel(sequelize);
 const Futsal = createFutsalModel(sequelize);
 const Futsal_image = createFutsalImgModel(sequelize);
-const FutsalMerchant = createFutsalMerchantModel(sequelize);
+
 const Court = createFutsalCourtModel(sequelize);
 const Slot = createSlotModel(sequelize);
 const Closing_day = createClosingDayModel(sequelize);
@@ -51,9 +49,11 @@ const Credit_point = createCreditPointModel(sequelize);
 User.belongsTo(Role, { foreignKey: "role_title" });  // User belongs to Role
 Role.hasMany(User, { foreignKey: "role_title" });    // Role has many Users
 
+
 //relation defined for user and banner
 Banner.belongsTo(User, { foreignKey: "created_by", as: "createdBy" }); // One Banner belongs to one User
 User.hasMany(Banner, { foreignKey: "created_by", as: "createdBy" });  // One User has many Banners
+
 
 // //relation defined for user and futsal one user can have only one futsal
 User.hasOne(Futsal, { foreignKey: "owner_id" });
@@ -81,16 +81,10 @@ Court.hasMany(Closing_day, { foreignKey: "court_id" });  // One User has many Ba
 Futsal.hasMany(Tag, { foreignKey: "futsal_id" });
 Tag.belongsTo(Futsal, { foreignKey: "futsal_id" });
 
-// //  One Futsal can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
-Futsal.hasMany(FutsalMerchant, { foreignKey: "futsal_id" });
-FutsalMerchant.belongsTo(Futsal, { foreignKey: "futsal_id" });
-
-// //  One Service can have multiple merchant payment records but it won't accept the same fields more than once as it is set to unqiue in futsal_merchant_payment
-Service.hasMany(FutsalMerchant, { foreignKey: "service_id" });
-FutsalMerchant.belongsTo(Service, { foreignKey: "service_id" });
 
 Transaction.belongsTo(Booking, { foreignKey: "booking_id" });
 Booking.hasOne(Transaction, { foreignKey: "booking_id" });
+
 
 Credit_point.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Credit_point, { foreignKey: "user_id" });
@@ -101,13 +95,16 @@ Booking.hasMany(Booked_slot, {
     as: 'booked_slots'  // Add this to match your include
 });
 
+
 // Fix the Slot association (was using booking_id incorrectly):
 Booked_slot.belongsTo(Slot, { foreignKey: "slot_id" });
 Slot.hasMany(Booked_slot, { foreignKey: "slot_id" });
 
+
 // User association is correct:
 Booking.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Booking, { foreignKey: "user_id" });
+
 
 Credit_point.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Credit_point, { foreignKey: "user_id" });
@@ -140,10 +137,10 @@ module.exports = {
     User,
     Role,
     Banner,
-    Service,
+
     Tag,
     Futsal,
-    FutsalMerchant,
+
     Futsal_image,
     Court,
     Slot,

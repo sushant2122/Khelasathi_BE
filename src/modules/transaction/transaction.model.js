@@ -24,12 +24,13 @@ const transactionSchema = {
         type: DataTypes.STRING,
         allowNull: false
     },
+
     payment_type: {
         type: DataTypes.STRING,
         allowNull: false
     },
     payment_status: {
-        type: DataTypes.ENUM("pending", "paid", "failed", "refunded"),
+        type: DataTypes.ENUM("pending", "paid", "failed", "refunded", "refund-failed"),
         defaultValue: "pending"
     }
 };

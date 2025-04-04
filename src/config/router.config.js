@@ -7,8 +7,7 @@ const CourtRouter = require('../modules/court/court.router');
 const CreditPointRouter = require('../modules/credit_point/credit_point.router');
 const futsalRouter = require('../modules/futsal/futsal.router');
 const futsalImageRouter = require('../modules/futsal_image/futsal_image.router');
-const futsalMerchantRouter = require('../modules/futsal_merchant/futsal_merchant.router');
-const serviceRouter = require('../modules/service/service.router');
+
 const slotRouter = require('../modules/slot/slot.router');
 const tagRouter = require('../modules/tag/tag.router');
 const transactionRouter = require('../modules/transaction/transaction.router');
@@ -22,14 +21,9 @@ router.use('/auth', authRouter);
 
 router.use('/banner', bannerRouter);
 
-router.use('/service', serviceRouter);
-
 router.use('/tag', tagRouter);
 
 router.use('/futsal', futsalRouter);
-
-router.use('/futsal-merchant', futsalMerchantRouter);
-
 
 
 router.use('/futsal-image', futsalImageRouter);

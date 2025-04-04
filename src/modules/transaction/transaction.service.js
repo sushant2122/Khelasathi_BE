@@ -22,6 +22,45 @@ class TransactionService {
             throw exception;
         }
     }
+    refundKhalti = async (formData, transaction_id) => {
+        try {
+            const headers = {
+                Authorization: `key ${process.env.KHALTI_SECRET_KEY}`,
+                "Content-Type": "application/json",
+            };
+
+            console.log(transaction_id);
+
+            const txn_id = transaction_id;
+
+            // Process refund
+            try {
+                response = await axios.post(
+                    `https://a.khalti.com/api/merchant-transaction/${txn_id}/refund/`,
+                    formData,
+                    { headers } // Ensure headers are included
+                );
+            } catch (error) {
+                return {
+                    message: "Failed to process refund",
+                    error: error.response?.data || "Unknown error",
+                };
+            }
+
+            return {
+                message: "Khalti refund success",
+                payment_method: "Khalti",
+                data: response.data,
+            };
+        } catch (exception) {
+            console.error("Error in refundKhalti:", exception.message);
+            return {
+                message: "An unexpected error occurred",
+                error: exception.message,
+            };
+        }
+    };
+
 
     createTransaction = async (data) => {
         try {
@@ -59,6 +98,21 @@ class TransactionService {
             };
         }
 
+    }
+
+    getSingleData = async (filter) => {
+        try {
+            const transaction = await Transaction.findOne({ where: filter });
+
+            if (!transaction) {
+                throw ({ code: 404, message: "Transaction does not exists.", status: "TRANSACTION_NOT_FOUND" });
+            } else {
+                return transaction;
+            }
+
+        } catch (exception) {
+            throw exception;
+        }
     }
 }
 const transactionSvc = new TransactionService();
