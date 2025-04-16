@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const AdminStatsRouter = require('../modules/admin-stats/admin-stats.router');
 const authRouter = require("../modules/auth/auth.router");  // This is your authRouter
 const bannerRouter = require('../modules/banner/banner.router');
 const BookingRouter = require('../modules/booking/booking.router');
@@ -41,6 +42,7 @@ router.use('/credit-point', CreditPointRouter)
 router.use('/transaction', transactionRouter)
 
 router.use('/contactus', contactUsRouter)
+router.use('/admin-stats', AdminStatsRouter)
 
 // Default route
 router.use("/", (req, res) => {
