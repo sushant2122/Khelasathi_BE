@@ -24,14 +24,6 @@ const futsalCourtSchema = {
         unique: true,
         allowNull: false
     },
-    booking_minimum_amount: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    court_total_amount: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
 
 };
 

@@ -23,6 +23,13 @@ class AuthService {
 
         return data;
     }
+    transformUpdateUserDetails = async (req) => {
+        const data = req.body;
+        if (req.file) {
+            data.profile_img = await uploadHelper(req.file.path);
+        }
+        return data;
+    }
 
     createUser = async (userData, next) => {
         try {

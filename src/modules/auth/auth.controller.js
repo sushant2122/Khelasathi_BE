@@ -259,10 +259,33 @@ class AuthController {
             next(exception)
         }
     }
-    //logout left 
-    logout = (req, res, next) => {
+    update = async (req, res, next) => {
+        try {
+            // Transform user details (including file upload if present)
+            const data = await authSvc.transformUpdateUserDetails(req);
 
-    }
+            const userId = req.authUser.user_id;
+            const filter = { user_id: userId };
+
+            // Create the user and handle the result
+            const updateddetails = await authSvc.updateUserById(filter, data);
+            res.json({
+                message: "Profile updated successfully.",
+                result: updateddetails,
+                status: "SUCCESS",
+                meta: null
+            });
+
+        } catch (exception) {
+            // Handle any unexpected errors during the process
+            console.error(exception);
+
+        } finally {
+            if (req.file) {
+                fileDelete(req.file.path);
+            }
+        }
+    };
 }
 const authCtrl = new AuthController()
 module.exports = authCtrl;

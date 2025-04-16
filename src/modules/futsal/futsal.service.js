@@ -17,6 +17,7 @@ class FutsalService {
 
             data.citizenship_front_url = await uploadHelper(req.files.citizenship_front_url[0].path, 'futsals');
             data.citizenship_back_url = await uploadHelper(req.files.citizenship_back_url[0].path, 'futsals');
+            data.image_url = await uploadHelper(req.files.image_url[0].path, 'futsals');
         } else {
             // Handle the case where no file is uploaded for this field
             throw { code: 404, message: "File  not found.", status: "FILE_NOT_FOUND" };

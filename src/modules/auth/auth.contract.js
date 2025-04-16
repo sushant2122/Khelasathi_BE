@@ -41,10 +41,15 @@ const changePasswordDTO = Joi.object({
 const resetDTO = Joi.object({
     email: Joi.string().email().required()
 });
+const updateDTO = Joi.object({
+    full_name: Joi.string().min(2).max(50),
+    address: Joi.string().min(4).max(50),
+    contact_number: Joi.string().min(10).max(10),
+    profile_img: Joi.string()
+});
 
 
 
 
 
-
-module.exports = { signUpDTO, forgotPasswordDTO, changePasswordDTO, resetDTO }
+module.exports = { signUpDTO, forgotPasswordDTO, changePasswordDTO, resetDTO, updateDTO }

@@ -114,6 +114,14 @@ class TransactionService {
             throw exception;
         }
     }
+    listAllByFilter = async (filter = {}) => {
+        try {
+            const list = await Transaction.findAll({ where: filter });
+            return { list };
+        } catch (exception) {
+            throw exception;
+        }
+    };
 }
 const transactionSvc = new TransactionService();
 module.exports = { transactionSvc }

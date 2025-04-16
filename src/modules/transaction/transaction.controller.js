@@ -2,7 +2,7 @@ const axios = require('axios');
 const { bookingSvc } = require('../booking/booking.service');
 const { transactionSvc } = require('./transaction.service');
 const { Op } = require('sequelize'); // Make sure to import Op if using Sequelize
-const { Booking } = require('../../config/db.config');
+const { Booking, sequelize } = require('../../config/db.config');
 
 class TransactionController {
     constructor() {
@@ -10,9 +10,29 @@ class TransactionController {
         this.setupStaleBookingChecker();
     }
 
-    async addTransaction(req, res) {
+    index = async (req, res, next) => {
         try {
-            const { txnId, pidx, amount, purchase_order_id, transaction_id, message } = req.query;
+
+            let filter = {};
+
+            // Fetch the list and total count of banners
+            const { list } = await transactionSvc.listAllByFilter(filter);
+
+            res.json({
+                result: list,
+                meta: null,
+                message: "List all trnasactions.",
+                status: "TRANSACTION_LIST_SUCCESS"
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    };
+    async addTransaction(req, res, next) {
+        try {
+            // const { txnId, pidx, amount, purchase_order_id, transaction_id, message } = req.query;
+            const { pidx, amount, purchase_order_id, transaction_id, message } = req.body;
+            console.log({ pidx, amount, purchase_order_id, transaction_id, message })
 
             // 1. Initial validation
             if (message) {
@@ -131,12 +151,12 @@ class TransactionController {
                     status: "KHALTI_VERIFICATION_FAILED"
                 });
             }
-
-            return res.status(500).json({
-                message: "Internal server error",
-                error: error.message,
-                status: "INTERNAL_SERVER_ERROR"
-            });
+            next(error);
+            // return res.status(500).json({
+            //     message: "Internal server error",
+            //     error: error.message,
+            //     status: "INTERNAL_SERVER_ERROR"
+            // });
         }
     }
     async checkAndCancelStalePendingBookings() {
@@ -178,6 +198,7 @@ class TransactionController {
                     // - Log the cancellation
                 } catch (updateError) {
                     console.error(`Failed to cancel stale booking ${booking.booking_id}:`, updateError);
+                    next(updateError);
                 }
             }
         } catch (error) {
@@ -191,6 +212,97 @@ class TransactionController {
             this.checkAndCancelStalePendingBookings();
         }, 5 * 60 * 1000);
     }
+
+    getUserTransactions = async (req, res, next) => {
+        try {
+            const userId = req.authUser.user_id;
+            const page = parseInt(req.query.page) || 1; // Default to page 1
+            const limit = parseInt(req.query.limit) || 10; // Default 10 items per page
+
+            if (!userId) {
+                return res.status(400).json({
+                    result: null,
+                    message: "Missing required parameter: userId.",
+                    status: "BAD_REQUEST"
+                });
+            }
+
+            // First, get the total count of transactions for this user
+            const countQuery = `
+                SELECT COUNT(t.transaction_id) as total
+                FROM "Transactions" t
+                JOIN "Bookings" b ON t.booking_id = b.booking_id
+                WHERE b.user_id = :userId
+            `;
+
+            const countResult = await sequelize.query(countQuery, {
+                replacements: { userId },
+                type: sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+
+            const total = countResult[0].total;
+            const totalPages = Math.ceil(total / limit);
+            const offset = (page - 1) * limit;
+
+            // Main query to fetch transactions with related booking and futsal info
+            const query = `
+               SELECT t.*
+                FROM "Transactions" t
+                JOIN "Bookings" b ON t.booking_id = b.booking_id
+                WHERE b.user_id = :userId
+                ORDER BY t.transaction_date DESC
+                LIMIT :limit OFFSET :offset;
+            `;
+
+            const results = await sequelize.query(query, {
+                replacements: { userId, limit, offset },
+                type: sequelize.QueryTypes.SELECT,
+                raw: true,
+                nest: true
+            });
+
+            if (!results || results.length === 0) {
+                return res.status(404).json({
+                    result: [],
+                    message: "No transactions found for this user.",
+                    status: "NOT_FOUND"
+                });
+            }
+
+            // Format the results
+            const formattedResults = results.map(transaction => ({
+                ...transaction,
+                slots: transaction.slots || []
+            }));
+
+            res.json({
+                result: {
+                    list: formattedResults,
+                    pagination: {
+                        total,
+                        totalPages,
+                        currentPage: page,
+                        limit,
+                        hasNextPage: page < totalPages,
+                        hasPreviousPage: page > 1
+                    }
+                },
+                meta: null,
+                message: "User transactions fetched successfully.",
+                status: "TRANSACTIONS_FETCHED"
+            });
+
+        } catch (exception) {
+            console.error("Error fetching user transactions:", exception);
+            res.status(500).json({
+                result: null,
+                message: exception.message || "Failed to fetch user transactions",
+                meta: null,
+                status: "INTERNAL_SERVER_ERROR"
+            });
+        }
+    };
 }
 
 const transactionCtrl = new TransactionController();

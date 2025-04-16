@@ -21,8 +21,8 @@ const bookingUpdateDTO = Joi.object({
     status: Joi.string().valid('pending', 'confirmed', 'cancelled', 'completed', 'no-show').default('pending')
 });
 
-const bookingCancelDTO = Joi.object({
-    mobile: Joi.string().min(10).max(10).required()
-});
+// const bookingCancelDTO = Joi.object({
+//     mobile: Joi.string().min(10).max(10).required()
+// });
 
-module.exports = { bookingCreateDTO, bookingUpdateDTO, bookingCancelDTO };
+module.exports = { bookingCreateDTO, bookingUpdateDTO };

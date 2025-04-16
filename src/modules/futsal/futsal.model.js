@@ -45,6 +45,9 @@ const futsalSchema = {
     citizenship_front_url: {
         type: DataTypes.STRING(255),
     },
+    image_url: {
+        type: DataTypes.STRING(255),
+    },
     citizenship_back_url: {
         type: DataTypes.STRING(255),
     },

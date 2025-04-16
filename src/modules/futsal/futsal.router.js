@@ -7,7 +7,8 @@ const futsalCtrl = require("./futsal.controller");
 
 const futsalRouter = require("express").Router();
 
-futsalRouter.get('/show-home/:id', loginCheck, checkAccess('Player'), futsalCtrl.showForHome)
+futsalRouter.get('/show-home/:id', loginCheck, futsalCtrl.showForHome)
+futsalRouter.get('/list-futsal', futsalCtrl.listForFutsal)
 futsalRouter.get('/list-home', futsalCtrl.listForHome)
 futsalRouter.put('/verify-futsal/:id', loginCheck, checkAccess('Admin'), bodyValidator(futsalVerifyDTO), futsalCtrl.verify)
 futsalRouter.route('/')
@@ -15,10 +16,11 @@ futsalRouter.route('/')
     .post(loginCheck, checkAccess(['Admin', 'Venue']), setPath('futsals'),
         uploader.fields([
             { name: 'citizenship_front_url', maxCount: 1 },
-            { name: 'citizenship_back_url', maxCount: 1 }
+            { name: 'citizenship_back_url', maxCount: 1 },
+            { name: 'image_url', maxCount: 1 }
         ]), bodyValidator(futsalCreateDTO), futsalCtrl.store)
 futsalRouter.route("/:id")
-    .get(loginCheck, checkAccess(['Admin', 'Venue']), futsalCtrl.show)
+    .get(futsalCtrl.show)
     .put(loginCheck, checkAccess(['Admin', 'Venue']), bodyValidator(futsalUpdateDTO), futsalCtrl.update)
     .delete(loginCheck, checkAccess('Admin'), futsalCtrl.remove)
 

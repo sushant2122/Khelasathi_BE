@@ -178,7 +178,9 @@ class FutsalImageController {
      */
     showForHome = async (req, res, next) => {
         try {
+            const id = req.params.id;
             const filter = {
+                futsal_id: id,
                 is_active: true
             }
             const futsalimg = await futsalImgSvc.listAllByFilter({

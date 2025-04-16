@@ -90,10 +90,11 @@ class FutsalController {
 
         } finally {
             if (req.files) {
-                if (req.files && req.files.citizenship_front_url && req.files.citizenship_front_url[0]) {
+                if (req.files && req.files.citizenship_front_url && req.files.citizenship_front_url[0], req.files.image_url[0]) {
                     // File exists, proceed to delete it
                     fileDelete(req.files.citizenship_front_url[0].path);
                     fileDelete(req.files.citizenship_back_url[0].path);
+                    fileDelete(req.files.image_url[0].path);
                 } else {
                     // Handle the case where no file is uploaded for this field
                     next({ code: 404, message: "File  not found.", status: "FILE_NOT_FOUND" })
@@ -113,8 +114,8 @@ class FutsalController {
      */
     show = async (req, res, next) => {
         try {
-            const id = req.params.id;
-            const futsal = await futsalSvc.getSingleFutsalData({ futsal_id: id });
+            const slug = req.params.id;
+            const futsal = await futsalSvc.getSingleFutsalData({ slug: slug });
             res.json({
                 result: futsal,
                 meta: null,
@@ -188,10 +189,35 @@ class FutsalController {
                 verification_status: "approved"
             }
             const futsal = await futsalSvc.listAllByFilter({
-                limit: 4,
+                limit: 3,
                 offset: 0,
                 filter
 
+            }
+            );
+            res.json({
+                result: futsal,
+                meta: null,
+                message: "Futsal for display.",
+                status: "FUTSAL_FETCHED"
+            });
+
+
+        } catch (exception) {
+            next(exception)
+        }
+    }
+
+    listForFutsal = async (req, res, next) => {
+        try {
+            const filter = {
+                is_active: true,
+                verification_status: "approved"
+            }
+            const futsal = await futsalSvc.listAllByFilter({
+                limit: 100,
+                offset: 0,
+                filter
             }
             );
             res.json({

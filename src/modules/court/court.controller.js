@@ -134,8 +134,8 @@ class FutsalCourtController {
      */
     showForHome = async (req, res, next) => {
         try {
-
-            const { list } = await courtSvc.listAllByFilter();
+            const id = req.params.id;
+            const { list } = await courtSvc.listAllByFilter({ futsal_id: id });
             res.json({
                 result: list,
                 meta: null,

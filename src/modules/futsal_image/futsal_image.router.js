@@ -6,7 +6,7 @@ const { createFutsalImageDTO, updateFutsalImageDTO } = require("./futsal_image.c
 const { futsalImgCtrl } = require("./futsal_image.controller");
 const { setPath, uploader } = require("../../middleware/uploader.middleware");
 const futsalImageRouter = require("express").Router();
-futsalImageRouter.get('/show-home/', loginCheck, checkAccess(['Player', 'Venue']), futsalImgCtrl.showForHome) //for extracting the 
+futsalImageRouter.get('/show-home/:id', futsalImgCtrl.showForHome) //for extracting the 
 
 futsalImageRouter.route('/')
     .get(loginCheck, checkAccess(['Admin', 'Venue']), checkFutsalRegistered(), futsalImgCtrl.index)

@@ -8,7 +8,7 @@ const { courtCreateDTO, courtUpdateDTO } = require("./court.contract");
 const CourtRouter = require("express").Router();
 
 // Route to fetch active courts for the home page
-CourtRouter.get('/show-home/', loginCheck, checkAccess('Player'), futsalCourtCtrl.showForHome);
+CourtRouter.get('/show-home/:id', loginCheck, futsalCourtCtrl.showForHome);
 
 // Routes for CRUD operations on courts
 CourtRouter.route('/')

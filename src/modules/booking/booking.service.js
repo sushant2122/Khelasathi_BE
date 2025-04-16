@@ -194,7 +194,8 @@ class BookingService {
 
             //for payment integration 
             const formdata = {
-                "return_url": "http://localhost:9005/api/v1/transaction/callbackkhalti",
+                // "return_url": "http://localhost:9005/api/v1/transaction/callbackkhalti",
+                "return_url": "http://localhost:5173/transaction-process",
                 "website_url": "http://localhost:5173/",
                 "amount": total_amount * 100,
                 "purchase_order_id": newBooking.booking_id,

@@ -137,10 +137,8 @@ module.exports = {
     User,
     Role,
     Banner,
-
     Tag,
     Futsal,
-
     Futsal_image,
     Court,
     Slot,
@@ -149,5 +147,4 @@ module.exports = {
     Booked_slot,
     Transaction,
     Credit_point
-
 };

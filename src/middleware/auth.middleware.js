@@ -34,7 +34,8 @@ const loginCheck = async (req, res, next) => {
                     contact_number: user.contact_number,
                     is_verified: user.is_verified,
                     role_title: user.role_title,
-                    profile_img: user.profile_img
+                    profile_img: user.profile_img,
+                    address: user.address
                 };
                 next();
 
@@ -43,8 +44,13 @@ const loginCheck = async (req, res, next) => {
         }
 
     } catch (exception) {
-        console.log("jwtexception", exception)
-        next(exception);
+        if (exception instanceof jwt.TokenExpiredError) {
+            next({ code: 401, status: "TOKEN_EXPIRED", message: exception.message })
+        } else {
+            console.log("jwtexception", exception)
+            next(exception);
+        }
+
     }
 
 }

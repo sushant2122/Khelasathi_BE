@@ -3,7 +3,9 @@ const express = require('express');
 require("./db.config");
 const router = require('./router.config');
 const app = express();
+const cors = require("cors");
 
+app.use(cors())
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

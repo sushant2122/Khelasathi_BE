@@ -5,7 +5,9 @@ const EventName = {
     SIGNUP_EMAIL: "signup",
     ACTIVATION_EMAIL: "accountactivated",
     FORGET_PASSWORD: "forgotpassword",
-    PASSWORD_RESET_SUCCESSFUL: "passwordresetsuccess"
+    PASSWORD_RESET_SUCCESSFUL: "passwordresetsuccess",
+    CONTACT_US: "contactus"
+
 }
 
 myEvent.on(EventName.SIGNUP_EMAIL, async (data) => {
@@ -108,4 +110,23 @@ myEvent.on(EventName.PASSWORD_RESET_SUCCESSFUL, async (data) => {
 
     }
 })
+myEvent.on(EventName.CONTACT_US, async (data) => {
+    try {
+        await Mailsvc.mailSend({
+            to: "contact@khelasathi.com",
+            sub: `${data.subject}`,
+            message: `
+                <p>${data.message}</p>
+                <br />
+                <p>Regards,</p>
+                <p>${data.email}</p>
+            `
+        });
+        console.log("Contact Us email sent successfully.");
+    } catch (exception) {
+        console.error("Failed to send Contact Us email:", exception);
+        process.exit(1);
+    }
+});
+
 module.exports = { myEvent, EventName };

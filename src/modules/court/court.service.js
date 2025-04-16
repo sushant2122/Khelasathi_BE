@@ -49,7 +49,7 @@ class CourtService {
     listAllByFilter = async (filter = {}) => {
         try {
 
-            const list = await Court.findAll({ where: filter, logging: console.log }); // Debugging log
+            const list = await Court.findAll({ where: filter }); // Debugging log
 
             return { list };
         } catch (exception) {

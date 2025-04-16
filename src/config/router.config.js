@@ -3,11 +3,11 @@ const authRouter = require("../modules/auth/auth.router");  // This is your auth
 const bannerRouter = require('../modules/banner/banner.router');
 const BookingRouter = require('../modules/booking/booking.router');
 const closingDayRouter = require('../modules/closing_day/closing_day.router');
+const contactUsRouter = require('../modules/contact_us/contact_us.router');
 const CourtRouter = require('../modules/court/court.router');
 const CreditPointRouter = require('../modules/credit_point/credit_point.router');
 const futsalRouter = require('../modules/futsal/futsal.router');
 const futsalImageRouter = require('../modules/futsal_image/futsal_image.router');
-
 const slotRouter = require('../modules/slot/slot.router');
 const tagRouter = require('../modules/tag/tag.router');
 const transactionRouter = require('../modules/transaction/transaction.router');
@@ -39,6 +39,8 @@ router.use('/booking', BookingRouter)
 router.use('/credit-point', CreditPointRouter)
 
 router.use('/transaction', transactionRouter)
+
+router.use('/contactus', contactUsRouter)
 
 // Default route
 router.use("/", (req, res) => {

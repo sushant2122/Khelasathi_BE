@@ -165,27 +165,6 @@ class SlotController {
                     status: "BAD_REQUEST"
                 });
             }
-
-            // const query = `
-            //     SELECT s.slot_id, s.title, s.start_time, s.end_time, s.price,s.credit_point
-            //     FROM "Slots" s
-            //     LEFT JOIN "Booked_slots" bs 
-            //         ON s.slot_id = bs.slot_id 
-            //         AND bs.booking_id IN (
-            //             SELECT booking_id 
-            //             FROM "Bookings" 
-            //             WHERE booking_date = :date
-            //         )
-            //     LEFT JOIN "Closing_days" cd 
-            //         ON s.court_id = cd.court_id 
-            //         AND cd.date = :date
-            //     WHERE s.court_id = :courtId
-            //     AND s.is_active = TRUE
-            //     AND bs.booked_slot_id IS NULL 
-            //     AND cd.closing_day_id IS NULL 
-            //     ORDER BY s.start_time; 
-            // `;
-
             const query =
                 `SELECT s.slot_id, s.title, s.start_time, s.end_time, s.price, s.credit_point
 FROM "Slots" s
