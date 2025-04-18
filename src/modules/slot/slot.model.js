@@ -20,11 +20,13 @@ const SlotSchema = {
     },
     start_time: {
         type: DataTypes.TIME,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     end_time: {
         type: DataTypes.TIME,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     price: {
         type: DataTypes.INTEGER,

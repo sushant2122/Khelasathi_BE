@@ -106,7 +106,30 @@ class TransactionController {
             }
 
             // 3. Handle payment status
-            if (response.data.status !== "Completed") {
+            if (response.data.status === "Completed") {
+
+
+                const updatedBooking = await bookingSvc.updateBooking(purchase_order_id, "completed", true);
+
+                const transactionData = {
+                    booking_id: purchase_order_id,
+                    total_payment: response.data.total_amount / 100, // Convert to rupees
+                    payment_session_id: response.data.transaction_id,
+                    payment_type: "E-Wallet",
+                    payment_status: "paid",
+                };
+
+                const transaction = await transactionSvc.createTransaction(transactionData);
+
+                // 6. Return success response
+                return res.status(200).json({
+                    message: "Payment processed successfully",
+                    status: "PAYMENT_SUCCESS",
+                    booking: updatedBooking,
+                    transaction: transaction
+                });
+
+            } else {
                 const transactionData = {
                     booking_id: purchase_order_id,
                     total_payment: response.data.total_amount / 100,
@@ -125,39 +148,6 @@ class TransactionController {
                     status: "PAYMENT_NOT_COMPLETED"
                 });
             }
-
-            // 4. Get booking details
-            const bookingDetails = await bookingSvc.listAllByFilter({ booking_id: purchase_order_id });
-
-            if (!bookingDetails || bookingDetails.length === 0) {
-                return res.status(404).json({
-                    message: "Booking not found",
-                    status: "BOOKING_NOT_FOUND"
-                });
-            }
-
-            const booking = bookingDetails[0];
-
-            // 5. Process successful payment
-            const updatedBooking = await bookingSvc.updateBooking(purchase_order_id, "completed", true);
-
-            const transactionData = {
-                booking_id: purchase_order_id,
-                total_payment: response.data.total_amount / 100, // Convert to rupees
-                payment_session_id: response.data.transaction_id,
-                payment_type: "E-Wallet",
-                payment_status: "paid",
-            };
-
-            const transaction = await transactionSvc.createTransaction(transactionData);
-
-            // 6. Return success response
-            return res.status(200).json({
-                message: "Payment processed successfully",
-                status: "PAYMENT_SUCCESS",
-                booking: updatedBooking,
-                transaction: transaction
-            });
 
         } catch (error) {
             console.error("Error in addTransaction:", error);
@@ -399,6 +389,7 @@ class TransactionController {
                 transaction_date: transaction.transaction_date,
                 total_payment: transaction.total_payment,
                 payment_status: transaction.payment_status,
+                payment_session_id: transaction.payment_session_id,
                 payment_type: transaction.payment_type,
                 booking: {
                     user_id: transaction.user_id,
