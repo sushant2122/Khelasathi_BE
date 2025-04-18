@@ -165,35 +165,27 @@ class SlotController {
                     status: "BAD_REQUEST"
                 });
             }
-            const query =
-                `SELECT s.slot_id, s.title, s.start_time, s.end_time, s.price, s.credit_point
+            const query = `
+SELECT DISTINCT s.slot_id, s.title, s.start_time, s.end_time, s.price, s.credit_point
 FROM "Slots" s
-LEFT JOIN "Booked_slots" bs 
-    ON s.slot_id = bs.slot_id 
-    AND bs.booking_id IN (
-        SELECT booking_id 
-        FROM "Bookings" 
-        WHERE booking_date = :date
-        AND status NOT IN ('cancelled')  -- Only consider non-cancelled bookings
-    )
-LEFT JOIN "Closing_days" cd 
-    ON s.court_id = cd.court_id 
-    AND cd.date = :date
 WHERE s.court_id = :courtId
 AND s.is_active = TRUE
-AND (
-    bs.booked_slot_id IS NULL  -- Either slot is not booked at all
-    OR EXISTS (  -- OR it's booked but the booking is cancelled
-        SELECT 1 
-        FROM "Bookings" b
-        JOIN "Booked_slots" bs2 ON b.booking_id = bs2.booking_id
-        WHERE bs2.slot_id = s.slot_id
-        AND b.booking_date = :date
-        AND b.status = 'cancelled'
-    )
+AND NOT EXISTS (
+    SELECT 1 
+    FROM "Booked_slots" bs
+    JOIN "Bookings" b ON bs.booking_id = b.booking_id
+    WHERE bs.slot_id = s.slot_id
+    AND b.booking_date = :date
+    AND b.status NOT IN ('cancelled')
 )
-AND cd.closing_day_id IS NULL 
-ORDER BY s.start_time;`;
+AND NOT EXISTS (
+    SELECT 1 
+    FROM "Closing_days" cd
+    WHERE cd.court_id = s.court_id
+    AND cd.date = :date
+)
+ORDER BY s.start_time;
+`;
 
             // Use just the results, not metadata for SELECT queries
             const results = await sequelize.query(query, {
