@@ -12,6 +12,7 @@ const futsalImageRouter = require('../modules/futsal_image/futsal_image.router')
 const slotRouter = require('../modules/slot/slot.router');
 const tagRouter = require('../modules/tag/tag.router');
 const transactionRouter = require('../modules/transaction/transaction.router');
+const VenueStatsRouter = require('../modules/venue-stats/venue-stats.router');
 
 // Route for checking health status
 router.use("/health", (req, res) => {
@@ -43,6 +44,8 @@ router.use('/transaction', transactionRouter)
 
 router.use('/contactus', contactUsRouter)
 router.use('/admin-stats', AdminStatsRouter)
+router.use('/venue-stats', VenueStatsRouter)
+
 
 // Default route
 router.use("/", (req, res) => {
