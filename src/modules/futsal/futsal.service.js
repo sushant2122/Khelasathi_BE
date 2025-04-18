@@ -20,6 +20,9 @@ class FutsalService {
             data.image_url = await uploadHelper(req.files.image_url[0].path, 'futsals');
         } else {
             // Handle the case where no file is uploaded for this field
+            delete data.image_url
+            delete data.citizenship_front_url
+            delete data.citizenship_back_url
             throw { code: 404, message: "File  not found.", status: "FILE_NOT_FOUND" };
         }
 
@@ -28,10 +31,11 @@ class FutsalService {
 
     transformFutsalVerifyData = async (req) => {
         const data = req.body;
-        data.owner_id = req.authUser.user_id;
         data.verification_date = new Date();
         return data;
     };
+
+
     createFutsal = async (data, req) => {
         try {
             // Check if the futsal with the same slug already exists

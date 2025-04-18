@@ -72,17 +72,17 @@ class BannerService {
             throw exception;
         }
     }
-    updateBanner = async (bannerId, data) => {
+    updateBanner = async (Id, data) => {
         try {
             // First, make sure the banner exists
-            const banner = await Banner.findByPk(bannerId);
+            const banner = await Banner.findByPk(Id);
 
             if (!banner) {
                 throw { code: 400, message: "Banner not found", status: "BANNER_NOT_FOUND" };
             }
 
             // Now update the banner with the new data
-            const updatedBanner = await Banner.update(data);
+            const updatedBanner = await banner.update(data);
 
             return updatedBanner;
 

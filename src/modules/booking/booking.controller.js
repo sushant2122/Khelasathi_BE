@@ -519,6 +519,190 @@ class BookingController {
         }
     }
 
+    getBookingsByFutsal = async (req, res, next) => {
+        try {
+            // 1. Validate and parse parameters
+            const { futsal_id } = req.params;
+            const page = Math.max(1, parseInt(req.query.page) || 1);
+            const limit = Math.max(1, parseInt(req.query.limit) || 10);
+            const offset = (page - 1) * limit;
+
+            // 2. Strict validation for futsal_id
+            if (!/^\d+$/.test(futsal_id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid Futsal ID. Must be a numeric value',
+                    received: futsal_id
+                });
+            }
+            const futsalId = parseInt(futsal_id, 10);
+
+            // 3. Debug logging (remove in production)
+            console.log(`Fetching bookings for futsal ID: ${futsalId}`);
+
+            // 4. Main query using parameterized queries
+            const query = `
+                WITH booking_data AS (
+                    SELECT 
+                        b.booking_id,
+                        b.booking_date,
+                        b.status,
+                        b.total_amount,
+                        u.full_name AS customer_name,
+                        u.email AS customer_email,
+                        json_agg(
+                            json_build_object(
+                                'slot_id', s.slot_id,
+                                'title', s.title,
+                                'start_time', s.start_time,
+                                'end_time', s.end_time,
+                                'price', s.price,
+                                'court_title', c.title
+                            )
+                        ) AS booked_slots,
+                        COUNT(*) OVER() AS total_count
+                    FROM "Bookings" b
+                    JOIN "Users" u ON b.user_id = u.user_id
+                    JOIN "Booked_slots" bs ON b.booking_id = bs.booking_id
+                    JOIN "Slots" s ON bs.slot_id = s.slot_id
+                    JOIN "Courts" c ON s.court_id = c.court_id
+                    WHERE c.futsal_id = :futsalId
+                    GROUP BY b.booking_id, u.full_name, u.email
+                    ORDER BY b.booking_date DESC
+                    LIMIT :limit OFFSET :offset
+                )
+                SELECT * FROM booking_data;
+            `;
+
+            const results = await sequelize.query(query, {
+                replacements: {
+                    futsalId,
+                    limit,
+                    offset
+                },
+                type: sequelize.QueryTypes.SELECT
+            });
+
+            // 5. Format response
+            const response = {
+                success: true,
+                data: results.map(booking => ({
+                    ...booking,
+                    booked_slots: booking.booked_slots || []
+                })),
+                pagination: {
+                    current_page: page,
+                    per_page: limit,
+                    total_items: results[0]?.total_count || 0,
+                    total_pages: Math.ceil((results[0]?.total_count || 0) / limit)
+                }
+            };
+
+            return res.json(response);
+
+        } catch (error) {
+            console.error('Error in getBookingsByFutsal:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Server error while fetching bookings',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    };
+
+    getBookingsOfFutsal = async (req, res, next) => {
+        try {
+            // 1. Validate and parse parameters
+            const futsalId = req.authUser.futsal_id;
+            console.log(req.authUser);
+            const page = Math.max(1, parseInt(req.query.page) || 1);
+            const limit = Math.max(1, parseInt(req.query.limit) || 10);
+            const offset = (page - 1) * limit;
+
+            // // 2. Strict validation for futsal_id
+            // if (!/^\d+$/.test(futsal_id)) {
+            //     return res.status(400).json({
+            //         success: false,
+            //         message: 'Invalid Futsal ID. Must be a numeric value',
+            //         received: futsal_id
+            //     });
+            // }
+            // const futsalId = parseInt(futsal_id, 10);
+
+            // // 3. Debug logging (remove in production)
+            // console.log(`Fetching bookings for futsal ID: ${futsalId}`);
+
+            // 4. Main query using parameterized queries
+            console.log("futsalid", futsalId)
+            const query = `
+                WITH booking_data AS (
+                    SELECT 
+                        b.booking_id,
+                        b.booking_date,
+                        b.status,
+                        b.total_amount,
+                        u.full_name AS customer_name,
+                        u.email AS customer_email,
+                        json_agg(
+                            json_build_object(
+                                'slot_id', s.slot_id,
+                                'title', s.title,
+                                'start_time', s.start_time,
+                                'end_time', s.end_time,
+                                'price', s.price,
+                                'court_title', c.title
+                            )
+                        ) AS booked_slots,
+                        COUNT(*) OVER() AS total_count
+                    FROM "Bookings" b
+                    JOIN "Users" u ON b.user_id = u.user_id
+                    JOIN "Booked_slots" bs ON b.booking_id = bs.booking_id
+                    JOIN "Slots" s ON bs.slot_id = s.slot_id
+                    JOIN "Courts" c ON s.court_id = c.court_id
+                    WHERE c.futsal_id = :futsalId
+                    GROUP BY b.booking_id, u.full_name, u.email
+                    ORDER BY b.booking_date DESC
+                    LIMIT :limit OFFSET :offset
+                )
+                SELECT * FROM booking_data;
+            `;
+
+            const results = await sequelize.query(query, {
+                replacements: {
+                    futsalId,
+                    limit,
+                    offset
+                },
+                type: sequelize.QueryTypes.SELECT
+            });
+
+            // 5. Format response
+            const response = {
+                success: true,
+                data: results.map(booking => ({
+                    ...booking,
+                    booked_slots: booking.booked_slots || []
+                })),
+                pagination: {
+                    current_page: page,
+                    per_page: limit,
+                    total_items: results[0]?.total_count || 0,
+                    total_pages: Math.ceil((results[0]?.total_count || 0) / limit)
+                }
+            };
+
+            return res.json(response);
+
+        } catch (error) {
+            console.error('Error in getBookingsByFutsal:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Server error while fetching bookings',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    };
+
 }
 
 const bookingCtrl = new BookingController();

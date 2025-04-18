@@ -12,16 +12,34 @@ class TransactionController {
 
     index = async (req, res, next) => {
         try {
+            let page = +req.query.page || 1;
+            let limit = +req.query.limit || 10;
+            let offset = (page - 1) * limit; // `offset` in Sequelize is equivalent to `skip`
 
             let filter = {};
 
-            // Fetch the list and total count of banners
-            const { list } = await transactionSvc.listAllByFilter(filter);
+            // Fetch the list and total count of transactions
+            const { list, total } = await transactionSvc.listAllByFilter({ limit, offset });
+
+            // Check if the requested page exceeds the total available pages
+            const totalPages = Math.ceil(total / limit);
+            if (page > totalPages && totalPages > 0) {
+                return next({
+                    code: 404,
+                    message: "No data to load for the requested page.",
+                    status: "PAGINATION_ERROR"
+                });
+            }
 
             res.json({
                 result: list,
-                meta: null,
-                message: "List all trnasactions.",
+                meta: {
+                    limit,
+                    page,
+                    total,
+                    totalpages: totalPages
+                },
+                message: "List all transactions.",
                 status: "TRANSACTION_LIST_SUCCESS"
             });
         } catch (exception) {
@@ -298,6 +316,126 @@ class TransactionController {
             res.status(500).json({
                 result: null,
                 message: exception.message || "Failed to fetch user transactions",
+                meta: null,
+                status: "INTERNAL_SERVER_ERROR"
+            });
+        }
+    };
+    getFutsalTransactions = async (req, res, next) => {
+        try {
+            const futsalId = req.authUser.futsal_id;
+            const page = parseInt(req.query.page) || 1; // Default to page 1
+            const limit = parseInt(req.query.limit) || 10; // Default 10 items per page
+
+            if (!futsalId) {
+                return res.status(400).json({
+                    result: null,
+                    message: "Missing required parameter: futsalId.",
+                    status: "BAD_REQUEST"
+                });
+            }
+
+            // First, get the total count of transactions for this futsal
+            const countQuery = `
+                SELECT COUNT(t.transaction_id) as total
+                FROM "Transactions" t
+                JOIN "Bookings" b ON t.booking_id = b.booking_id
+                JOIN "Booked_slots" bs ON b.booking_id = bs.booking_id
+                JOIN "Slots" s ON bs.slot_id = s.slot_id
+                JOIN "Courts" c ON s.court_id = c.court_id
+                WHERE c.futsal_id = :futsalId
+            `;
+
+            const countResult = await sequelize.query(countQuery, {
+                replacements: { futsalId },
+                type: sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+
+            const total = countResult[0].total;
+            const totalPages = Math.ceil(total / limit);
+            const offset = (page - 1) * limit;
+
+            // Main query to fetch transactions with related booking and futsal info
+            const query = `
+                SELECT 
+                    t.*,
+                    b.user_id,
+                    b.booking_date,
+                    b.status as booking_status,
+                    c.title as court_title,
+                    s.title as slot_title,
+                    s.start_time,
+                    s.end_time,
+                    s.price
+                FROM "Transactions" t
+                JOIN "Bookings" b ON t.booking_id = b.booking_id
+                JOIN "Booked_slots" bs ON b.booking_id = bs.booking_id
+                JOIN "Slots" s ON bs.slot_id = s.slot_id
+                JOIN "Courts" c ON s.court_id = c.court_id
+                WHERE c.futsal_id = :futsalId
+                ORDER BY t.transaction_date DESC
+                LIMIT :limit OFFSET :offset;
+            `;
+
+            const results = await sequelize.query(query, {
+                replacements: { futsalId, limit, offset },
+                type: sequelize.QueryTypes.SELECT,
+                raw: true,
+                nest: true
+            });
+
+            if (!results || results.length === 0) {
+                return res.status(404).json({
+                    result: [],
+                    message: "No transactions found for this futsal.",
+                    status: "NOT_FOUND"
+                });
+            }
+
+            // Format the results
+            const formattedResults = results.map(transaction => ({
+                transaction_id: transaction.transaction_id,
+                transaction_date: transaction.transaction_date,
+                total_payment: transaction.total_payment,
+                payment_status: transaction.payment_status,
+                payment_type: transaction.payment_type,
+                booking: {
+                    user_id: transaction.user_id,
+                    booking_date: transaction.booking_date,
+                    status: transaction.booking_status
+                },
+                slot: {
+                    court_title: transaction.court_title,
+                    slot_title: transaction.slot_title,
+                    start_time: transaction.start_time,
+                    end_time: transaction.end_time,
+                    price: transaction.price
+                }
+            }));
+
+            res.json({
+                result: {
+                    list: formattedResults,
+                    pagination: {
+                        total,
+                        totalPages,
+                        currentPage: page,
+                        limit,
+                        hasNextPage: page < totalPages,
+                        hasPreviousPage: page > 1
+                    }
+                },
+                meta: null,
+                message: "Futsal transactions fetched successfully.",
+                status: "TRANSACTIONS_FETCHED"
+            });
+
+        } catch (exception) {
+            console.error("Error fetching futsal transactions:", exception);
+            res.status(500).json({
+                result: null,
+                message: exception.message || "Failed to fetch futsal transactions",
                 meta: null,
                 status: "INTERNAL_SERVER_ERROR"
             });

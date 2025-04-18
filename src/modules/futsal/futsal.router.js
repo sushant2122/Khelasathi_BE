@@ -10,7 +10,11 @@ const futsalRouter = require("express").Router();
 futsalRouter.get('/show-home/:id', loginCheck, futsalCtrl.showForHome)
 futsalRouter.get('/list-futsal', futsalCtrl.listForFutsal)
 futsalRouter.get('/list-home', futsalCtrl.listForHome)
-futsalRouter.put('/verify-futsal/:id', loginCheck, checkAccess('Admin'), bodyValidator(futsalVerifyDTO), futsalCtrl.verify)
+//futsal detail of logged in user 
+futsalRouter.get('/venue-futsal', loginCheck, checkAccess('Venue'), futsalCtrl.getFutsalDetail)
+futsalRouter.put('/verify-futsal/:id', loginCheck, checkAccess('Admin'), bodyValidator(futsalVerifyDTO),
+    futsalCtrl.verify)
+futsalRouter.get('/futsaldetail/:id', loginCheck, checkAccess('Admin'), futsalCtrl.getAllFutsalsWithDetails)
 futsalRouter.route('/')
     .get(loginCheck, checkAccess('Admin'), futsalCtrl.index)
     .post(loginCheck, checkAccess(['Admin', 'Venue']), setPath('futsals'),

@@ -114,10 +114,23 @@ class TransactionService {
             throw exception;
         }
     }
-    listAllByFilter = async (filter = {}) => {
+
+
+    listAllByFilter = async ({ limit = 10, offset = 0, filter = {} }) => {
         try {
-            const list = await Transaction.findAll({ where: filter });
-            return { list };
+            const total = await Transaction.count({
+                where: filter
+            });
+
+            const list = await Transaction.findAll({
+                where: filter,
+
+                order: [['transaction_date', 'DESC']], // Sorting by createdAt descending
+                limit: limit,
+                offset: offset
+            });
+
+            return { list, total };
         } catch (exception) {
             throw exception;
         }

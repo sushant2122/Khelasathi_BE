@@ -16,25 +16,7 @@ class FutsalImageController {
             let limit = +req.query.limit || 10;
             let offset = (page - 1) * limit; // `offset` in Sequelize is equivalent to `skip`
 
-            let filter = {};
-
-            if (req.query.search) {
-                filter = {
-                    ...filter,
-                    [Op.or]: [
-                        { title: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
-                    ]
-                };
-            }
-
-            // Handle the 'is_active' filter
-            if (req.query.status !== undefined) {
-                const status = req.query.status === 'true' ? true : req.query.status === 'false' ? false : undefined;
-                if (status !== undefined) {
-                    filter.is_active = status;
-                }
-            }
-
+            let filter = { futsal_id: req.authUser.futsal_id };
             // Fetch the list and total count of banners
             const { list, total } = await futsalImgSvc.listAllByFilter({ limit, offset, filter });
 

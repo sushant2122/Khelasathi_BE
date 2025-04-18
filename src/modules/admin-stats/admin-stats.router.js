@@ -13,9 +13,9 @@ AdminStatsRouter.get('/monthly-revenue', loginCheck, checkAccess('Admin'), admin
 AdminStatsRouter.get('/booking-status', loginCheck, checkAccess('Admin'), adminStatsCtrl.getBookingStatusStats)
 
 AdminStatsRouter.get('/latest-transaction', loginCheck, checkAccess('Admin'), adminStatsCtrl.getLatestTransactions)
-AdminStatsRouter.get('/:futsal_id', loginCheck, checkAccess('Admin'), adminStatsCtrl.getBookingsByFutsal)
 
-AdminStatsRouter.get('/futsal/:id', loginCheck, checkAccess('Admin'), adminStatsCtrl.getAllFutsalsWithDetails)
+
+
 
 //AdminStatsRouter.get('/credit-booking', loginCheck, bookingCtrl.)
 module.exports = AdminStatsRouter;
