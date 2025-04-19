@@ -43,14 +43,6 @@ const updateSlotDTO = Joi.object({
         "string.base": "Title must be a string",
         "string.max": "Title cannot exceed 255 characters"
     }),
-    start_time: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).messages({
-        "string.base": "Start time must be a string",
-        "string.pattern.base": "Start time must be in the format HH:MM"
-    }),
-    end_time: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).messages({
-        "string.base": "End time must be a string",
-        "string.pattern.base": "End time must be in the format HH:MM"
-    }),
     price: Joi.number().integer().min(0).messages({
         "number.base": "Price must be a number",
         "number.integer": "Price must be an integer",

@@ -14,7 +14,9 @@ class SlotController {
     index = async (req, res, next) => {
         try {
 
-            let filter = {};
+            let filter = {
+                court_id: req.query.court_id
+            };
 
             if (req.query.search) {
                 filter = {
@@ -50,19 +52,22 @@ class SlotController {
         }
     };
 
-
-    /**
-     *  * this function is to create banners by logged in user
-     * @param {import ("express").Request} req 
-     *  * @param {import ("express").Response} res
-     *  * @param {import ("express").NextFunction} next
-     * @return {void} 
-    
-     */
     store = async (req, res, next) => {
         try {
             const data = req.body;
+
+            // Validate that end time is after start time
+            if (data.end_time <= data.start_time) {
+                return res.status(400).json({
+                    result: null,
+                    meta: null,
+                    message: "End time must be after start time",
+                    status: "TIME_VALIDATION_ERROR"
+                });
+            }
+
             const slot = await slotSvc.createSlot(data);
+
             res.json({
                 result: slot,
                 meta: null,
@@ -71,11 +76,48 @@ class SlotController {
             });
 
         } catch (exception) {
-            next(exception)
-
+            if (exception.message.includes('overlaps')) {
+                return res.status(400).json({
+                    result: null,
+                    meta: null,
+                    message: exception.message,
+                    status: "SLOT_OVERLAP_ERROR"
+                });
+            }
+            next(exception);
         }
-
     }
+
+    update = async (req, res, next) => {
+        try {
+            const slot_id = req.params.id;
+            const data = req.body;
+
+            // Validate that end time is after start time
+            if (data.end_time <= data.start_time) {
+                return res.status(400).json({
+                    result: null,
+                    meta: null,
+                    message: "End time must be after start time",
+                    status: "TIME_VALIDATION_ERROR"
+                });
+            }
+
+            const slot = await slotSvc.updateSlot(slot_id, data);
+
+            res.json({
+                result: slot,
+                meta: null,
+                message: "Slot updated successfully.",
+                status: "SLOT_UPDATE_SUCCESS"
+            });
+
+        } catch (exception) {
+
+            next(exception);
+        }
+    }
+
     /**
      *  this function is used to show the details of the banner by logged in user
      * @param {import ("express").Request} req 
@@ -98,31 +140,8 @@ class SlotController {
             next(exception)
         }
     }
-    /**
-     *  this function is used to update a banner data by the logged in admin user
-     * @param {import ("express").Request} req 
-     *  * @param {import ("express").Response} res
-     *  * @param {import ("express").NextFunction} next
-     * @return {void} 
-    
-     */
-    update = async (req, res, next) => {
-        try {
 
-            const id = req.params.id;
-            const data = req.body;
-            const slot = await slotSvc.updateSlot(id, data);
-            res.json({
-                result: slot,
-                meta: null,
-                message: "Slot updated successfully.",
-                status: "SLOT_UPDATE_SUCCESS"
-            });
 
-        } catch (exception) {
-            next(exception)
-        }
-    }
     /**
      *  this function is used to remove  a banner  by the logged in admin user
      * @param {import ("express").Request} req 

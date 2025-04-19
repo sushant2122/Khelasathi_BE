@@ -11,16 +11,11 @@ class FutsalCourtController {
      */
     index = async (req, res, next) => {
         try {
-            let filter = {};
+            let filter = {
+                futsal_id: req.authUser.futsal_id
+            };
 
-            if (req.query.search) {
-                filter = {
-                    ...filter,
-                    [Op.or]: [
-                        { title: { [Op.iLike]: `%${req.query.search}%` } }, // Case-insensitive LIKE search
-                    ]
-                };
-            }
+
 
             // Fetch the list of courts based on the filter
             const { list } = await courtSvc.listAllByFilter(filter);

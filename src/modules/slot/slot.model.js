@@ -20,13 +20,11 @@ const SlotSchema = {
     },
     start_time: {
         type: DataTypes.TIME,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     end_time: {
         type: DataTypes.TIME,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     price: {
         type: DataTypes.INTEGER,
@@ -42,13 +40,9 @@ const SlotSchema = {
     }
 };
 
-// Function to create the model with a unique constraint on (futsal_id, service_id)
 const createSlotModel = (sequelize) => {
-    const slot = sequelize.define(
-        'Slots',
-        SlotSchema
-    );
-    return slot;
+    const slot = sequelize.define('Slots', SlotSchema);
+    return slot
 };
 
 module.exports = {

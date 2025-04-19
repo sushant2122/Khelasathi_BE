@@ -1,16 +1,70 @@
+const { Op } = require("sequelize");
 const { Slot } = require("../../config/db.config");
 
 class SlotService {
+    constructor(model) {
+        this.model = model;
+    }
 
-    createSlot = async (data) => {
+    async checkOverlappingSlots(court_id, start_time, end_time, slot_id = null) {
+        const whereClause = {
+            court_id,
+            [Op.or]: [
+                {
+                    start_time: { [Op.lt]: end_time },
+                    end_time: { [Op.gt]: start_time }
+                }
+            ]
+        };
+
+        if (slot_id) {
+            whereClause.id = { [Op.ne]: slot_id }; // assuming the primary key is "id"
+        }
+
+        const overlappingSlots = await this.model.findAll({
+            where: whereClause
+        });
+
+        return overlappingSlots.length > 0;
+    }
+
+    async createSlot(data) {
         try {
-            const newSlot = await Slot.create(data);
+            const isOverlapping = await this.checkOverlappingSlots(
+                data.court_id,
+                data.start_time,
+                data.end_time
+            );
+
+            if (isOverlapping) {
+                throw new Error('Time slot overlaps with an existing slot for this court');
+            }
+
+            const newSlot = await this.model.create(data);
             return newSlot;
         } catch (exception) {
             throw exception;
         }
-
     }
+
+    async updateSlot(slot_id, data) {
+        try {
+
+            const [updated] = await this.model.update(data, {
+                where: { slot_id: slot_id } // assuming 'id' is the primary key
+            });
+
+            if (!updated) {
+                throw new Error('Slot not found');
+            }
+
+            return await this.model.findByPk(slot_id);
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
+
     listAllByFilter = async (filter = {}) => {
         try {
             const list = await Slot.findAll({ where: filter });
@@ -34,24 +88,7 @@ class SlotService {
             throw exception;
         }
     }
-    updateSlot = async (Id, data) => {
-        try {
-            // First, make sure the banner exists
-            const slot = await Slot.findOne({ where: { slot_id: Id } });
 
-            if (!slot) {
-                throw { code: 400, message: "Slot not found", status: "SLOT_NOT_FOUND" };
-            }
-
-            // Now update the banner with the new data
-            const updatedSlot = await slot.update(data);
-
-            return updatedSlot;
-
-        } catch (exception) {
-            throw exception;
-        }
-    }
     deleteSlotById = async (id) => {
 
         try {
@@ -73,5 +110,5 @@ class SlotService {
     };
 
 }
-const slotSvc = new SlotService();
+const slotSvc = new SlotService(Slot);
 module.exports = { slotSvc };

@@ -127,6 +127,21 @@ class FutsalController {
             next(exception)
         }
     }
+
+    registeredFutsal = async (req, res, next) => {
+        try {
+
+            const futsal = await futsalSvc.getSingleFutsalData({ futsal_id: req.authUser.futsal_id });
+            res.json({
+                result: futsal,
+                meta: null,
+                message: "Futsal details.",
+                status: "FUTSAL_FOUND"
+            });
+        } catch (exception) {
+            next(exception)
+        }
+    }
     /**
      *  this function is used to update a futsal data by the logged in admin user
      * @param {import ("express").Request} req 
@@ -136,22 +151,40 @@ class FutsalController {
      
      */
     update = async (req, res, next) => {
-        try {
+        let data;
 
-            const futsal_id = req.params.id;
-            const data = await futsalSvc.transformFutsalUpdateData(req);
+        try {
+            const futsal_id = req.authUser.futsal_id;
+
+
+            data = await futsalSvc.transformFutsalUpdateData(req);
+
+
             const futsal = await futsalSvc.updateFutsal(futsal_id, data);
+
             res.json({
                 result: futsal,
                 meta: null,
                 message: "Futsal updated successfully.",
                 status: "FUTSAL_UPDATE_SUCCESS"
             });
-
         } catch (exception) {
-            next(exception)
-        }
+            next(exception);
+        } finally {
+            const files = req.files || {};
+
+            if (files.citizenship_front_url?.[0]) {
+                fileDelete(files.citizenship_front_url[0].path);
+            }
+            if (files.citizenship_back_url?.[0]) {
+                fileDelete(files.citizenship_back_url[0].path);
+            }
+            if (files.image_url?.[0]) {
+                fileDelete(files.image_url[0].path);
+            }
+        };
     }
+
     /**
      *  this function is used to remove  a futsal  by the logged in admin user
      * @param {import ("express").Request} req 

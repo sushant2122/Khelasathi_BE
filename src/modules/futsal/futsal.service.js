@@ -28,6 +28,26 @@ class FutsalService {
 
         return data;
     };
+    transformFutsalUpdateData = async (req) => {
+        const data = req.body;
+        const files = req.files || {};
+
+        if (files.citizenship_front_url?.[0]) {
+            data.citizenship_front_url = await uploadHelper(files.citizenship_front_url[0].path, 'futsals');
+        }
+
+        if (files.citizenship_back_url?.[0]) {
+            data.citizenship_back_url = await uploadHelper(files.citizenship_back_url[0].path, 'futsals');
+        }
+
+        if (files.image_url?.[0]) {
+            data.image_url = await uploadHelper(files.image_url[0].path, 'futsals');
+        }
+
+        return data;
+    };
+
+
 
     transformFutsalVerifyData = async (req) => {
         const data = req.body;

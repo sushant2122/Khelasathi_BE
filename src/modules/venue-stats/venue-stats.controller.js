@@ -87,8 +87,8 @@ class VenueStatsController {
             const stats = [
                 { name: 'Total Bookings', value: (totalBookings.total_bookings || 0).toString(), icon: 'Calendar' },
                 { name: 'Total Revenue', value: formattedRevenue, icon: 'TrendingUp' },
-                { name: 'Total Courts', value: (totalCourts.total_courts || 0).toString(), icon: 'MapPin' },
-                { name: 'Total Closing Days', value: (closingdays.total_closing || 0).toString(), icon: 'CreditCard' },
+                { name: 'Total Courts', value: (totalCourts.total_courts || 0).toString(), icon: 'MapPinned' },
+                { name: 'Total Closing Days', value: (closingdays.total_closing || 0).toString(), icon: 'CalendarX' },
             ];
 
             res.json({
