@@ -54,11 +54,7 @@ npm install
 # Set up database (run in psql)
 CREATE DATABASE khelasathi;
 
-
-### 3. Environment setup
-
-```bash
-# (create .env file)
+# Environment setup (create .env file)
 cat <<EOT >> .env
 # Database
 PG_USER=your_db_user
@@ -78,8 +74,20 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
-### 4. Start development server
 
+# JWT
+JWT_SECRET=your_jwt_secret
+
+# Khalti
+KHALTI_SECRET_KEY=your_khalti_key
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+EOT
+
+### 4. Start development server
 ```bash
 # (Command to run the backend)
 npm run dev
