@@ -391,6 +391,7 @@ class FutsalController {
                 maplink: futsal.maplink,
                 contact_number: futsal.contact_number,
                 is_active: futsal.is_active,
+                image_url: futsal.image_url,
                 verification_status: futsal.verification_status,
                 courts: futsal.courts || [],
                 images: futsal.images || [],

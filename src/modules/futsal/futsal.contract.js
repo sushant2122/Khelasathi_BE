@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 const futsalCreateDTO = Joi.object({
     name: Joi.string().min(3).max(50).required(),
-    description: Joi.string().min(10).max(100).required(),
+    description: Joi.string().min(10).required(),
     location: Joi.string().min(3).max(50).required(),
     maplink: Joi.string().required(),
     is_active: Joi.string().regex(/^(true|false)$/).default(false),
@@ -18,7 +18,7 @@ const futsalCreateDTO = Joi.object({
 
 const futsalUpdateDTO = Joi.object({
     name: Joi.string().min(3).max(50),
-    description: Joi.string().min(10).max(100),
+    description: Joi.string().min(10),
     location: Joi.string().min(3).max(50),
     maplink: Joi.string().default(null),
     is_active: Joi.string().regex(/^(true|false)$/).default(false),

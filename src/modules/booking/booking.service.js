@@ -190,7 +190,7 @@ class BookingService {
 
             await Booked_slot.bulkCreate(bookedSlots, { transaction: t });
 
-            await creditSvc.earnPoint(data.user_id, newBooking.booking_id, total_points, { transaction: t });
+            // await creditSvc.earnPoint(data.user_id, newBooking.booking_id, total_points, { transaction: t });
 
             //for payment integration 
             const formdata = {

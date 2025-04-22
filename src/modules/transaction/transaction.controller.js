@@ -2,7 +2,8 @@ const axios = require('axios');
 const { bookingSvc } = require('../booking/booking.service');
 const { transactionSvc } = require('./transaction.service');
 const { Op } = require('sequelize'); // Make sure to import Op if using Sequelize
-const { Booking, sequelize } = require('../../config/db.config');
+const { Booking, sequelize, Transaction } = require('../../config/db.config');
+const { creditSvc } = require('../credit_point/credit_point.service');
 
 class TransactionController {
     constructor() {
@@ -47,21 +48,23 @@ class TransactionController {
         }
     };
     async addTransaction(req, res, next) {
+        const t = await Transaction.sequelize.transaction();
         try {
-            // const { txnId, pidx, amount, purchase_order_id, transaction_id, message } = req.query;
             const { pidx, amount, purchase_order_id, transaction_id, message } = req.body;
-            console.log({ pidx, amount, purchase_order_id, transaction_id, message })
+            console.log('Transaction data:', { pidx, amount, purchase_order_id, transaction_id, message });
 
             // 1. Initial validation
             if (message) {
+                await t.rollback();
                 return res.status(400).json({
                     result: message,
-                    message: "Error processing khalti",
+                    message: "Error processing Khalti payment",
                     status: "KHALTI_BAD_REQUEST"
                 });
             }
 
             if (!purchase_order_id || !pidx) {
+                await t.rollback();
                 return res.status(400).json({
                     message: "Missing required parameters",
                     status: "MISSING_PARAMETERS"
@@ -74,18 +77,17 @@ class TransactionController {
                 "Content-Type": "application/json",
             };
 
-            let response;
+            let khaltiResponse;
             try {
-                response = await axios.post(
+                khaltiResponse = await axios.post(
                     "https://a.khalti.com/api/v2/epayment/lookup/",
                     { pidx },
                     { headers }
                 );
-                console.log("Response data from lookup:", response.data);
+                console.log("Khalti verification response:", khaltiResponse.data);
             } catch (axiosError) {
                 console.error("Khalti API Error:", axiosError.response?.data || axiosError.message);
 
-                // Create failed transaction record
                 const transactionData = {
                     booking_id: purchase_order_id,
                     total_payment: amount ? amount / 100 : 0,
@@ -95,8 +97,9 @@ class TransactionController {
                     error_details: axiosError.response?.data || { error: axiosError.message }
                 };
 
-                await transactionSvc.createTransaction(transactionData);
-                await bookingSvc.updateBooking(purchase_order_id, "cancelled", false);
+                await transactionSvc.createTransaction(transactionData, { transaction: t });
+                await bookingSvc.updateBooking(purchase_order_id, "cancelled", false, { transaction: t });
+                await t.commit();
 
                 return res.status(400).json({
                     message: "Payment verification failed",
@@ -106,65 +109,98 @@ class TransactionController {
             }
 
             // 3. Handle payment status
-            if (response.data.status === "Completed") {
-
-
-                const updatedBooking = await bookingSvc.updateBooking(purchase_order_id, "completed", true);
-
+            if (khaltiResponse.data.status !== "Completed") {
                 const transactionData = {
                     booking_id: purchase_order_id,
-                    total_payment: response.data.total_amount / 100, // Convert to rupees
-                    payment_session_id: response.data.transaction_id,
-                    payment_type: "E-Wallet",
-                    payment_status: "paid",
-                };
-
-                const transaction = await transactionSvc.createTransaction(transactionData);
-
-                // 6. Return success response
-                return res.status(200).json({
-                    message: "Payment processed successfully",
-                    status: "PAYMENT_SUCCESS",
-                    booking: updatedBooking,
-                    transaction: transaction
-                });
-
-            } else {
-                const transactionData = {
-                    booking_id: purchase_order_id,
-                    total_payment: response.data.total_amount / 100,
+                    total_payment: khaltiResponse.data.total_amount / 100,
                     payment_session_id: pidx,
                     payment_type: "E-Wallet",
                     payment_status: "failed",
-                    error_details: response.data
+                    error_details: khaltiResponse.data
                 };
 
-                await transactionSvc.createTransaction(transactionData);
-                await bookingSvc.updateBooking(purchase_order_id, "cancelled", false);
+                await transactionSvc.createTransaction(transactionData, { transaction: t });
+                await bookingSvc.updateBooking(purchase_order_id, "cancelled", false, { transaction: t });
+                await t.commit();
 
                 return res.status(400).json({
-                    result: response.data,
+                    result: khaltiResponse.data,
                     message: "Payment not completed",
                     status: "PAYMENT_NOT_COMPLETED"
                 });
             }
 
+            // 4. Process successful payment
+            const updatedBooking = await bookingSvc.updateBooking(
+                purchase_order_id,
+                "completed",
+                true,
+                { transaction: t }
+            );
+
+            const transactionData = {
+                booking_id: purchase_order_id,
+                total_payment: khaltiResponse.data.total_amount / 100,
+                payment_session_id: khaltiResponse.data.transaction_id,
+                payment_type: "E-Wallet",
+                payment_status: "paid",
+            };
+
+            const transaction = await transactionSvc.createTransaction(transactionData, { transaction: t });
+
+            try {
+                const query = `
+                    SELECT 
+                        b.user_id,
+                        COUNT(bs.booked_slot_id) AS total_slots
+                    FROM "Bookings" b
+                    JOIN "Booked_slots" bs ON b.booking_id = bs.booking_id
+                    JOIN "Users" u ON b.user_id = u.user_id
+                    WHERE b.booking_id = :purchase_order_id 
+                    GROUP BY b.user_id, b.total_amount, b.status, u.full_name
+                `;
+
+                const results = await sequelize.query(query, {
+                    replacements: { purchase_order_id },
+                    type: sequelize.QueryTypes.SELECT,
+                    transaction: t
+                });
+
+                if (results?.length > 0 && results[0].user_id && results[0].total_slots) {
+                    const total_points = results[0].total_slots * 10;
+                    const { user_id } = results[0];
+
+
+                    await creditSvc.earnPoint(user_id, purchase_order_id, total_points, { transaction: t });
+                } else {
+
+                }
+            } catch (pointsError) {
+
+            }
+
+            await t.commit();
+
+            return res.status(200).json({
+                message: "Payment processed successfully",
+                status: "PAYMENT_SUCCESS",
+                booking: updatedBooking,
+                transaction: transaction
+            });
+
         } catch (error) {
-            console.error("Error in addTransaction:", error);
+            await t.rollback();
+            console.error("Transaction processing error:", error);
 
             if (error.response?.data) {
                 return res.status(400).json({
-                    message: "Payment verification failed",
+                    message: "Payment processing failed",
                     error: error.response.data,
-                    status: "KHALTI_VERIFICATION_FAILED"
+                    status: "PAYMENT_PROCESSING_ERROR"
                 });
             }
+
             next(error);
-            // return res.status(500).json({
-            //     message: "Internal server error",
-            //     error: error.message,
-            //     status: "INTERNAL_SERVER_ERROR"
-            // });
         }
     }
     async checkAndCancelStalePendingBookings() {

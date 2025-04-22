@@ -14,7 +14,7 @@ const checkFutsalRegistered = () => {
                 next();
             } else {
                 next({
-                    code: 403,
+                    code: 400,
                     message: "You do not have a registered futsal.",
                     status: "FUTSAL_NOT_REGISTERED"
                 });
