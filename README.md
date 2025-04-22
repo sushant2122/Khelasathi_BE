@@ -1,6 +1,6 @@
 # KhelaSathi - Futsal Booking Backend 🚀
 
-![KhelaSathi Logo](https://via.placeholder.com/150x50?text=KhelaSathi) *(Replace with actual logo if available)*
+![KhelaSathi Logo](https://res.cloudinary.com/dbvyoelj5/image/upload/v1745335513/logo/mhv3unpgvzho1fvnva74.png) *(Replace with actual logo if available)*
 
 **KhelaSathi** is a robust, real-time futsal booking backend system built with a **multitenancy architecture**. It empowers venue owners to manage their futsal courts while providing users with seamless booking experiences.
 
@@ -20,12 +20,12 @@
 ## 🛠️ Tech Stack
 
 - **Backend**: Node.js + Express.js
-- **Database**: PostgreSQL (Prisma ORM)
+- **Database**: PostgreSQL 
 - **Real-Time**: Socket.IO
 - **Authentication**: JWT
 - **Payments**: Khalti API
 - **Storage**: Cloudinary
-- **Security**: Helmet, Bcrypt, CORS
+- **Security**:  Bcrypt, CORS
 - **Environment**: dotenv
 
 ## 🚀 Getting Started
@@ -40,16 +40,13 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/khelasathi-backend.git
+   git clone https://github.com/sushant2122/Khelasathi_BE
    cd khelasathi-backend/backend
 
 
 ### 2. Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/khelasathi-backend.git
-cd khelasathi-backend/backend
 
 # Install dependencies
 npm install
@@ -57,7 +54,11 @@ npm install
 # Set up database (run in psql)
 CREATE DATABASE khelasathi;
 
-# Environment setup (create .env file)
+
+### 3. Environment setup
+
+```bash
+# (create .env file)
 cat <<EOT >> .env
 # Database
 PG_USER=your_db_user
@@ -77,8 +78,8 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
-# Run migrations
-npx prisma migrate dev --name init
+### 4. Start development server
 
-# Start development server
+```bash
+# (Command to run the backend)
 npm run dev
