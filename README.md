@@ -50,8 +50,8 @@
 
 
 3. **Create database(run in psql)**
-    ```bash
-    CREATE DATABASE khelasathi;
+  ```bash
+  CREATE DATABASE khelasathi;
 
 4. **Create .env file**
     ```bash 
