@@ -1,46 +1,84 @@
-# KhelaSathi - Futsal Booking Backend
+# KhelaSathi - Futsal Booking Backend 🚀
 
-**KhelaSathi** is a real-time futsal booking backend application with a **multitenancy architecture**. It allows **venue owners** to list their futsal courts, create booking slots, define closing days, and manage bookings, all under an **admin approval system**. Users can book available slots with **Khalti payment integration**, and a **credit point system** enhances user engagement. Real-time updates are handled using **Socket.IO**.
+![KhelaSathi Logo](https://via.placeholder.com/150x50?text=KhelaSathi) *(Replace with actual logo if available)*
 
----
+**KhelaSathi** is a robust, real-time futsal booking backend system built with a **multitenancy architecture**. It empowers venue owners to manage their futsal courts while providing users with seamless booking experiences.
 
-## 🔧 Features
+## 🌟 Key Features
 
-- 🏟️ Multi-venue support with multitenancy structure.
-- 📆 Real-time slot booking with socket implementation.
-- 🧾 Court listing, slot creation, and closing day setup.
-- ✅ Admin approval system for courts and slot visibility.
-- 💳 Integrated with **Khalti** for secure payment.
-- 🎯 Credit point system to reward users.
-- 📦 RESTful API using Node.js + Express.
-- 🗃️ PostgreSQL for robust relational data storage.
+| Feature Category       | Description                                                                 |
+|------------------------|-----------------------------------------------------------------------------|
+| **Multi-Venue Support** | Isolated data per tenant with admin approval system                        |
+| **Real-Time Booking**  | Live slot updates via Socket.IO                                            |
+| **Venue Management**   | Court listing, slot creation, closing days, booking/transaction views      |
+| **Payment Integration**| Khalti payment gateway with secure transactions                            |
+| **Rewards System**     | Credit points for user engagement                                          |
+| **Media Handling**     | Cloudinary integration for image uploads                                   |
+| **Discoverability**    | Tagging system and map integration for venues                              |
+| **Security**          | JWT authentication with role-based access control                          |
 
----
+## 🛠️ Tech Stack
 
-## 🚀 Tech Stack
+- **Backend**: Node.js + Express.js
+- **Database**: PostgreSQL (Prisma ORM)
+- **Real-Time**: Socket.IO
+- **Authentication**: JWT
+- **Payments**: Khalti API
+- **Storage**: Cloudinary
+- **Security**: Helmet, Bcrypt, CORS
+- **Environment**: dotenv
 
-- Node.js
-- Express.js
-- PostgreSQL
-- Prisma ORM
-- Socket.IO
-- JWT (Authentication)
-- Khalti API (Payment)
-- dotenv
-- CORS, Helmet, Bcrypt
+## 🚀 Getting Started
 
----
+### Prerequisites
 
-## 🖥️ Local Setup Instructions
+- Node.js (v16+)
+- PostgreSQL (v12+)
+- npm/yarn
 
-Follow these steps to get the backend running on your local machine:
+### Installation
 
----
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/khelasathi-backend.git
+   cd khelasathi-backend/backend
 
-### 1. 🐘 Install PostgreSQL
 
-Make sure PostgreSQL is installed and running on your system.
+### 2. Installation
 
-- **Linux/macOS**:  
-  ```bash
-  sudo apt install postgresql postgresql-contrib
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/khelasathi-backend.git
+cd khelasathi-backend/backend
+
+# Install dependencies
+npm install
+
+# Set up database (run in psql)
+CREATE DATABASE khelasathi;
+
+# Environment setup (create .env file)
+cat <<EOT >> .env
+# Database
+PG_USER=your_db_user
+PG_PASSWORD=your_db_password
+PG_HOST=localhost
+PG_DATABASE=khelasathi
+
+# JWT
+JWT_SECRET=your_jwt_secret
+
+# Khalti
+KHALTI_SECRET_KEY=your_khalti_key
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+EOT
+
+# Run migrations
+npx prisma migrate dev --name init
+
+# Start development server
+npm run dev
