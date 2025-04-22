@@ -74,7 +74,6 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
-
 # JWT
 JWT_SECRET=your_jwt_secret
 
@@ -87,5 +86,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
+### 5. Install nodemon globally
+npm i nodemon -g 
 ### 4. Start development server
-npm run dev
+npm start
