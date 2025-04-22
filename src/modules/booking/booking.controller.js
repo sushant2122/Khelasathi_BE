@@ -77,73 +77,6 @@ class BookingController {
             next(exception);
         }
     };
-
-    getFutsalBookingsORM = async (req, res, next) => {
-        try {
-            const { futsalId, date } = req.query;
-
-            const where = {
-                '$court.futsal_id$': futsalId,
-                status: { [Op.not]: 'cancelled' }
-            };
-
-            if (date) where.booking_date = date;
-
-            const bookings = await Booking.findAll({
-                where,
-                include: [
-                    {
-                        model: User,
-                        attributes: ['full_name', 'phone_number']
-                    },
-                    {
-                        model: Booked_slot,
-                        as: 'booked_slots', // Add this to match your association
-                        include: [{
-                            model: Slot,
-                            include: [{
-                                model: Court,
-                                where: { futsal_id: futsalId },
-                                attributes: ['court_id', 'title', 'type']
-                            }]
-                        }]
-                    }
-                ],
-                order: [['booking_date', 'DESC'], ['booked_at', 'DESC']]
-            });
-
-            // Format the results
-            const formatted = bookings.map(booking => ({
-                booking_id: booking.booking_id,
-                user_id: booking.user_id,
-                booking_date: booking.booking_date,
-                booked_at: booking.booked_at,
-                status: booking.status,
-                total_amount: booking.total_amount,
-                user_name: booking.User.full_name,
-                user_phone: booking.User.phone_number,
-                court_id: booking.booked_slots[0]?.Slot?.Court?.court_id,
-                court_title: booking.booked_slots[0]?.Slot?.Court?.title,
-                court_type: booking.booked_slots[0]?.Slot?.Court?.type,
-                slots: booking.booked_slots.map(bs => ({
-                    slot_id: bs.Slot.slot_id,
-                    title: bs.Slot.title,
-                    start_time: bs.Slot.start_time,
-                    end_time: bs.Slot.end_time,
-                    price: bs.Slot.price
-                }))
-            }));
-
-            return res.json({
-                result: formatted,
-                message: "Bookings retrieved successfully",
-                status: "SUCCESS"
-            });
-
-        } catch (error) {
-            next();
-        }
-    };
     creditBooking = async (req, res, next) => {
         try {
             const data = bookingSvc.transformBookingData(req);
@@ -159,7 +92,6 @@ class BookingController {
             next(exception);
         }
     }
-
     store = async (req, res, next) => {
         try {
             const data = bookingSvc.transformBookingData(req);
