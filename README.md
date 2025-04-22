@@ -1,6 +1,6 @@
 # KhelaSathi - Futsal Booking Backend 🚀
 
-![KhelaSathi Logo](https://res.cloudinary.com/dbvyoelj5/image/upload/v1745335513/logo/mhv3unpgvzho1fvnva74.png) *(Replace with actual logo if available)*
+![KhelaSathi Logo](https://res.cloudinary.com/dbvyoelj5/image/upload/v1745335513/logo/mhv3unpgvzho1fvnva74.png) 
 
 **KhelaSathi** is a robust, real-time futsal booking backend system built with a **multitenancy architecture**. It empowers venue owners to manage their futsal courts while providing users with seamless booking experiences.
 
@@ -41,19 +41,22 @@
 1. **Clone the repository**
    ```bash
    git clone https://github.com/sushant2122/Khelasathi_BE
-   cd khelasathi-backend/backend
+   cd khelasathi_BE-main/
 
 
-### 2. Installation
-
+###  Installation
+2. **Install dependencies**
 ```bash
-
 # Install dependencies
 npm install
 
+
+3. **Create database**
+```bash
 # Set up database (run in psql)
 CREATE DATABASE khelasathi;
 
+4. **Create .env file**
 # Environment setup (create .env file)
 cat <<EOT >> .env
 # Database
@@ -86,6 +89,6 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
-
+5. **Run the server**
 ### 4. Start development server
 npm run dev
