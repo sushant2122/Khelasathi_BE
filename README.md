@@ -44,46 +44,48 @@
    cd khelasathi_BE-main/
 
 
-2. **Install dependencies**
-  ```bash
-    npm install
+### 2. Installation
+
+```bash
+
+# Install dependencies
+npm install
+
+# Set up database (run in psql)
+CREATE DATABASE khelasathi;
+
+# Environment setup (create .env file)
+cat <<EOT >> .env
+# Database
+PG_USER=your_db_user
+PG_PASSWORD=your_db_password
+PG_HOST=localhost
+PG_DATABASE=khelasathi
+
+# JWT
+JWT_SECRET=your_jwt_secret
+
+# Khalti
+KHALTI_SECRET_KEY=your_khalti_key
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+EOT
 
 
-3. **Create database(run in psql)**
-  ```bash
-  CREATE DATABASE khelasathi;
+# JWT
+JWT_SECRET=your_jwt_secret
 
-4. **Create .env file**
-    ```bash 
-    cat <<EOT >> .env
-    # Database
-    PG_USER=your_db_user
-    PG_PASSWORD=your_db_password
-    PG_HOST=localhost
-    PG_DATABASE=khelasathi
+# Khalti
+KHALTI_SECRET_KEY=your_khalti_key
 
-    # JWT
-    JWT_SECRET=your_jwt_secret
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+EOT
 
-    # Khalti
-    KHALTI_SECRET_KEY=your_khalti_key
-
-    # Cloudinary
-    CLOUDINARY_CLOUD_NAME=your_cloud_name
-    CLOUDINARY_API_KEY=your_api_key
-    CLOUDINARY_API_SECRET=your_api_secret
-    EOT
-
-    JWT_SECRET=your_jwt_secret
-
-    # Khalti
-    KHALTI_SECRET_KEY=your_khalti_key
-
-    # Cloudinary
-    CLOUDINARY_CLOUD_NAME=your_cloud_name
-    CLOUDINARY_API_KEY=your_api_key
-    CLOUDINARY_API_SECRET=your_api_secret
-    EOT
-5. **Run the server**
-  ```bash 
-  npm run dev
+### 4. Start development server
+npm run dev
