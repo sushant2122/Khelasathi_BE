@@ -34,6 +34,4 @@ futsalRouter.route('/')
 futsalRouter.route("/:id")
     .get(futsalCtrl.show)
 
-    .delete(loginCheck, checkAccess('Admin'), futsalCtrl.remove)
-
 module.exports = futsalRouter;

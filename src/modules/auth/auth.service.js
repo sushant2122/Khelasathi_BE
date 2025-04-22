@@ -23,6 +23,7 @@ class AuthService {
 
         return data;
     }
+
     transformUpdateUserDetails = async (req) => {
         const data = req.body;
         if (req.file) {

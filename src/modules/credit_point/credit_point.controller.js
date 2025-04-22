@@ -55,9 +55,6 @@ class CreditPointController {
             next(exception);
         }
     };
-
-
-
 }
 
 const creditpointCtrl = new CreditPointController();

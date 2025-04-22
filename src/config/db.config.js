@@ -1,9 +1,8 @@
 
 //uncomment one by one where you are working
 const { Sequelize } = require("sequelize");
-const { createRoleModel } = require("../modules/role/role.model");
-const { createUserModel } = require("../modules/user/user.model");
-
+const { createRoleModel } = require("../modules/role/role.model"); //for seeding roles
+const { createUserModel } = require("../modules/user/user.model"); //for seeding the admin user 
 const { seedRoles } = require("../seeding/role.seeding");
 const { seedAdminUser } = require("../seeding/admin.seeding");
 const { createBannerModel } = require("../modules/banner/banner.model");
@@ -17,6 +16,8 @@ const { createBookingModel } = require("../modules/booking/booking.model");
 const { createBookedSlotModel } = require("../modules/booked_slots/booked_slots.model");
 const { createTransactionModel } = require("../modules/transaction/transaction.model");
 const { createCreditPointModel } = require("../modules/credit_point/credit_point.model");
+
+//definiong sequelize
 const sequelize = new Sequelize(
     process.env.PG_DATABASE,
     process.env.PG_USER,
@@ -27,7 +28,7 @@ const sequelize = new Sequelize(
         logging: false,  // Disable logging for cleaner console output
     }
 );
-
+//defining the models
 // Create models once and export them
 const Role = createRoleModel(sequelize);
 const User = createUserModel(sequelize);
@@ -44,6 +45,9 @@ const Booking = createBookingModel(sequelize);
 const Booked_slot = createBookedSlotModel(sequelize);
 const Transaction = createTransactionModel(sequelize);
 const Credit_point = createCreditPointModel(sequelize);
+
+
+//defining the relationship between the tables 
 
 //relation defined for user and role
 User.belongsTo(Role, { foreignKey: "role_title" });  // User belongs to Role
@@ -109,7 +113,7 @@ User.hasMany(Booking, { foreignKey: "user_id" });
 Credit_point.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Credit_point, { foreignKey: "user_id" });
 
-
+//initializing the database 
 const initDb = async () => {
     try {
         await sequelize.authenticate();

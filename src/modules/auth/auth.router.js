@@ -5,7 +5,6 @@ const { signUpDTO, forgotPasswordDTO, changePasswordDTO, resetDTO, updateDTO } =
 //config for uploader 
 const { setPath, uploader } = require("../../middleware/uploader.middleware");
 const { loginCheck } = require('../../middleware/auth.middleware');
-const { checkAccess } = require('../../middleware/rbac.middleware');
 
 // Signup route
 authRouter.post('/signup',

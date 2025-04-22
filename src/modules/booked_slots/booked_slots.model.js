@@ -23,7 +23,6 @@ const bookedSlotSchema = {
 
 };
 
-// booked_slot.model.js
 const createBookedSlotModel = (sequelize) => {
     const BookedSlot = sequelize.define("BookedSlots", bookedSlotSchema, {
         tableName: "Booked_slots",
@@ -35,7 +34,7 @@ const createBookedSlotModel = (sequelize) => {
             foreignKey: 'booking_id'
         });
         BookedSlot.belongsTo(models.Slot, {
-            foreignKey: 'slot_id'  // Fixed: was incorrectly using booking_id before
+            foreignKey: 'slot_id'
         });
     };
 

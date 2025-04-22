@@ -3,7 +3,7 @@ const { Op } = require("sequelize"); // Import Sequelize operators
 const { futsalImgSvc } = require("./futsal_image.service");
 class FutsalImageController {
     /**
-     *  * this function is used to show the banners by logged in user
+     *  * this function is used to show the futsal images by logged in user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -48,7 +48,7 @@ class FutsalImageController {
 
 
     /**
-     *  * this function is to create banners by logged in user
+     *  * this function is to create futsal images by logged in user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -77,7 +77,7 @@ class FutsalImageController {
 
     }
     /**
-     *  this function is used to show the details of the banner by logged in user
+     *  this function is used to show the details of the futsal images  by logged in user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -99,7 +99,7 @@ class FutsalImageController {
         }
     }
     /**
-     *  this function is used to update a banner data by the logged in admin user
+     *  this function is used to update a futsal image data by the logged in admin user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -128,7 +128,7 @@ class FutsalImageController {
         }
     }
     /**
-     *  this function is used to remove  a banner  by the logged in admin user
+     *  this function is used to remove  a futsal image  by the logged in admin user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -151,7 +151,7 @@ class FutsalImageController {
         }
     }
     /**
-     *  this function is used to fetch the active banner to display in the home page.
+     *  this function is used to fetch the active futsal image  to display in the home page.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next

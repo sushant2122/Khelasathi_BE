@@ -22,10 +22,7 @@ class BookingService {
 
         return data;
     }
-
-
     // for redeeming point 
-
     createBookingthroughPoint = async (data) => {
         const t = await Booking.sequelize.transaction();
 
@@ -51,7 +48,7 @@ class BookingService {
                 return sum + parseFloat(slot.price);
             }, 0);
 
-            //console.log(data.slots[0].slot_id);
+
             // const total_required_points = 40;
             const total_required_points = data.slots.reduce((sum, slot) => {
                 if (!slot.credit_point || isNaN(slot.credit_point)) {
@@ -108,7 +105,7 @@ class BookingService {
             // Deduct credit points
             await creditSvc.redeemPoint(data.user_id, newBooking.booking_id, total_required_points, { transaction: t });
             // Get complete booking details
-            console.log("before")
+
             // 
             const completeBooking = await Booking.findByPk(newBooking.booking_id, {
                 include: [{
@@ -119,7 +116,7 @@ class BookingService {
                 transaction: t
             });
 
-            console.log("completed booking", completeBooking);
+
 
             await t.commit();
 
@@ -140,7 +137,6 @@ class BookingService {
             };
         }
     };
-
     //for cash payment 
     createBooking = async (data, req, res) => {
         const t = await Booking.sequelize.transaction();
@@ -190,11 +186,10 @@ class BookingService {
 
             await Booked_slot.bulkCreate(bookedSlots, { transaction: t });
 
-            // await creditSvc.earnPoint(data.user_id, newBooking.booking_id, total_points, { transaction: t });
 
             //for payment integration 
             const formdata = {
-                // "return_url": "http://localhost:9005/api/v1/transaction/callbackkhalti",
+
                 "return_url": "http://localhost:5173/transaction-process",
                 "website_url": "http://localhost:5173/",
                 "amount": total_amount * 100,
@@ -281,19 +276,6 @@ class BookingService {
         }
     };
 
-    // listAllByFilter = async (filter = {}) => {
-    //     try {
-
-    //         const list = await Booking.findAll({ where: filter }); // Debugging log
-
-    //         return { list };
-    //     } catch (exception) {
-    //         throw exception;
-    //     }
-    // };
-
-    // Add other methods as needed
 }
-
 const bookingSvc = new BookingService();
 module.exports = { bookingSvc };

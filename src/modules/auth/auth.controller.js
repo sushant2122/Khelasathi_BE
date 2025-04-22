@@ -2,12 +2,19 @@
 const { fileDelete } = require("../../utilities/helper")
 const { myEvent, EventName } = require("../../middleware/events.middleware")
 const { authSvc } = require("../auth/auth.service");
-// const { User } = require("../../config/db.config");
 const { randomStringGenerator } = require("../../utilities/helper");
 const { Status } = require("../../config/constants.config");
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
 class AuthController {
+    /**
+*  this function is used to signup the user detail
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     signUp = async (req, res, next) => {
         try {
             // Transform user details (including file upload if present)
@@ -43,7 +50,14 @@ class AuthController {
             }
         }
     };
-
+    /**
+*  this function is used to activate the user by verifying token
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     activateUser = async (req, res, next) => {
         try {
             const token = req.params.token;
@@ -80,6 +94,14 @@ class AuthController {
             next(exception);
         }
     }
+    /**
+*  this function is used to resend the verification if expired
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     resendToken = async (req, res, next) => {
         try {
             const token = req.params.token;
@@ -109,7 +131,14 @@ class AuthController {
         }
 
     }
-
+    /**
+*  this function is used to login the user
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     signIn = async (req, res, next) => {
         try {
             const { email, password } = req.body;
@@ -163,7 +192,14 @@ class AuthController {
 
 
     }
-
+    /**
+*  this function is used to get the user details 
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     getUser = (req, res, next) => {
 
         res.json({
@@ -174,7 +210,14 @@ class AuthController {
         })
 
     }
-
+    /**
+*  this function is used to get send the mail if password is forgotten 
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     forgotPassword = async (req, res, next) => {
         try {
 
@@ -200,7 +243,14 @@ class AuthController {
         }
 
     }
-
+    /**
+*  this function is used to reset the password after successful token verification
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     resetPassword = async (req, res, next) => {
         try {
             const resettoken = req.params.token;
@@ -235,7 +285,14 @@ class AuthController {
             next(exception);
         }
     }
-
+    /**
+*  this function is used to change the password by entering the current password
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     changePassword = async (req, res, next) => {
         try {
             const { current_password, password } = req.body;
@@ -259,6 +316,15 @@ class AuthController {
             next(exception)
         }
     }
+
+    /**
+*  this function is used to update the user profile
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     update = async (req, res, next) => {
         try {
             // Transform user details (including file upload if present)

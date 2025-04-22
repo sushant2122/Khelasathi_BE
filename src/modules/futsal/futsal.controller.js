@@ -185,31 +185,9 @@ class FutsalController {
         };
     }
 
-    /**
-     *  this function is used to remove  a futsal  by the logged in admin user
-     * @param {import ("express").Request} req 
-     *  * @param {import ("express").Response} res
-     *  * @param {import ("express").NextFunction} next
-     * @return {void} 
-     
-     */
-    remove = async (req, res, next) => {
-        try {
-            const id = req.params.id;
-            const response = await futsalSvc.deleteFutsalById(id);
-            res.json({
-                result: response,
-                meta: null,
-                message: "Futsal deleted successfully.",
-                status: "FUTSAL_DELETE_SUCCESS"
-            });
 
-        } catch (exception) {
-            next(exception)
-        }
-    }
     /**
-     *  this function is used to fetch the active futsal to display in the home page.
+     *  this function is used to fetch 4 of the active futsal to display in the home page.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -241,7 +219,14 @@ class FutsalController {
             next(exception)
         }
     }
-
+    /**
+      *  this function is used to fetch all of the active futsal to display in the home page.
+      * @param {import ("express").Request} req 
+      *  * @param {import ("express").Response} res
+      *  * @param {import ("express").NextFunction} next
+      * @return {void} 
+      
+      */
     listForFutsal = async (req, res, next) => {
         try {
             const filter = {
@@ -266,6 +251,14 @@ class FutsalController {
             next(exception)
         }
     }
+    /**
+     *  this function is used to fetch all of the details of futsal.
+     * @param {import ("express").Request} req 
+     *  * @param {import ("express").Response} res
+     *  * @param {import ("express").NextFunction} next
+     * @return {void} 
+     
+     */
     showForHome = async (req, res, next) => {
         try {
             const id = req.params.id;
@@ -280,7 +273,14 @@ class FutsalController {
             next(exception)
         }
     };
-
+    /**
+         *  this function is used to verify the futsal.
+         * @param {import ("express").Request} req 
+         *  * @param {import ("express").Response} res
+         *  * @param {import ("express").NextFunction} next
+         * @return {void} 
+         
+         */
     verify = async (req, res, next) => {
         try {
 
@@ -298,6 +298,14 @@ class FutsalController {
             next(exception)
         }
     }
+    /**
+     *  this function is used to get details of futsal of the futsal owner.
+     * @param {import ("express").Request} req 
+     *  * @param {import ("express").Response} res
+     *  * @param {import ("express").NextFunction} next
+     * @return {void} 
+     
+     */
     getFutsalDetail = async (req, res, next) => {
         try {
             const user_id = req.authUser.user_id;
@@ -312,6 +320,14 @@ class FutsalController {
             next(exception)
         }
     }
+    /**
+        *  this function is used to get details of futsal for the verification process.
+        * @param {import ("express").Request} req 
+        *  * @param {import ("express").Response} res
+        *  * @param {import ("express").NextFunction} next
+        * @return {void} 
+        
+        */
     getAllFutsalsWithDetails = async (req, res, next) => {
         try {
             // Ensure page and limit are valid numbers
@@ -424,7 +440,6 @@ class FutsalController {
             next(error);
         }
     };
-
 
 }
 const futsalCtrl = new FutsalController();

@@ -4,7 +4,7 @@ const { Op } = require("sequelize"); // Import Sequelize operators
 const { tagSvc } = require("./tag.service");
 class tagController {
     /**
-     *  * this function is used to show the banners by logged in user
+     *  * this function is used to show the tags by logged in user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -67,7 +67,7 @@ class tagController {
 
 
     /**
-     *  * this function is to create banners by logged in user
+     *  * this function is to create tagds by logged in venue owner
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -94,7 +94,7 @@ class tagController {
     }
 
     /**
-     *  this function is used to update a banner data by the logged in admin user
+     *  this function is used to update a tag data by the logged in venue user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -119,7 +119,7 @@ class tagController {
         }
     }
     /**
-     *  this function is used to remove  a banner  by the logged in admin user
+     *  this function is used to remove  a tag  by the logged in venue user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -142,7 +142,7 @@ class tagController {
         }
     }
     /**
-     *  this function is used to fetch the active banner to display in the home page.
+     *  this function is used to fetch the active tag to display in the home page.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next

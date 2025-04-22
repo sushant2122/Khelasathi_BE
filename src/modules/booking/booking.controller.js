@@ -78,7 +78,7 @@ class BookingController {
         }
     };
 
-    getFutsalBookingsORM = async (req, res) => {
+    getFutsalBookingsORM = async (req, res, next) => {
         try {
             const { futsalId, date } = req.query;
 
@@ -141,11 +141,7 @@ class BookingController {
             });
 
         } catch (error) {
-            console.error("Error fetching futsal bookings:", error);
-            return res.status(500).json({
-                message: "Internal server error",
-                status: "INTERNAL_SERVER_ERROR"
-            });
+            next();
         }
     };
     creditBooking = async (req, res, next) => {
@@ -202,7 +198,7 @@ class BookingController {
         const booking_id = req.params.id;
 
         try {
-            // 1. Validate input
+
             if (!booking_id) {
                 return res.status(400).json({
                     message: "Booking ID is required",
@@ -213,7 +209,7 @@ class BookingController {
             const data = req.body;
 
 
-            // 2. Get original transaction
+
             transactiondetail = await transactionSvc.getSingleData({ booking_id });
             if (!transactiondetail) {
                 return res.status(404).json({
@@ -223,7 +219,7 @@ class BookingController {
             }
 
 
-            // 3. Validate if already refunded
+
             if (transactiondetail.payment_status === 'refunded') {
                 return res.status(400).json({
                     message: "This transaction was already refunded",
@@ -231,7 +227,7 @@ class BookingController {
                 });
             }
 
-            // 4. Calculate refund amount (90% of original)
+            //  Calculate refund amount (90% of original)
             const refundAmount = Math.round(transactiondetail.total_payment * 0.9); // Ensure 2 decimal places
             console.log("refamt:", refundAmount)
             // 5. Prepare Khalti refund request
@@ -239,12 +235,12 @@ class BookingController {
                 mobile: req.authUser.contact_number,
                 amount: refundAmount,
             };
-            console.log(formdata);
+
 
             // 6. Process refund with Khalti
             const refundResponse = await transactionSvc.refundKhalti(formdata, transactiondetail.payment_session_id);
 
-            console.log("success", refundResponse)
+
 
             //remove this part to show the refunded part of khalti
             // if (!refundResponse.success) {
@@ -256,10 +252,10 @@ class BookingController {
             //     };
             // }
 
-            // 7. Update booking status
+            //  Update booking status
             const booking = await bookingSvc.updateBooking(booking_id, 'cancelled', false);
 
-            // 8. Create refund transaction record
+            //  Create refund transaction record
             const transactionData = {
                 booking_id,
                 total_payment: refundAmount,
@@ -272,7 +268,7 @@ class BookingController {
 
             await transactionSvc.createTransaction(transactionData);
 
-            // 9. Return success response
+            //  Return success response
             return res.status(200).json({
                 result: {
                     booking,
@@ -313,7 +309,7 @@ class BookingController {
             });
         }
     };
-    // Add other methods as needed
+
     listForHome = async (req, res, next) => {
         try {
             const user_id = req.authUser.user_id;
@@ -355,7 +351,7 @@ class BookingController {
                 });
             }
 
-            // First, get the total count of bookings
+
             const countQuery = `
                 SELECT COUNT(DISTINCT b.booking_id) as total
                 FROM "Bookings" b
@@ -462,13 +458,7 @@ class BookingController {
             });
 
         } catch (exception) {
-            console.error("Error fetching user bookings:", exception);
-            res.status(500).json({
-                result: null,
-                message: exception.message || "Failed to fetch user bookings",
-                meta: null,
-                status: "INTERNAL_SERVER_ERROR"
-            });
+            next(exception);
         }
     };
 
@@ -483,12 +473,12 @@ class BookingController {
                 });
             }
 
-            // 1. Get total bookings count
+
             const totalBookings = await Booking.count({
                 where: { user_id: userId }
             });
 
-            // 2. Get cancelled bookings count
+
             const cancelledBookings = await Booking.count({
                 where: {
                     user_id: userId,
@@ -496,7 +486,7 @@ class BookingController {
                 }
             });
 
-            // 3. Get total slots booked count
+
             const totalSlotsBooked = await Booked_slot.count({
                 include: [{
                     model: Booking,
@@ -521,26 +511,12 @@ class BookingController {
 
     getBookingsByFutsal = async (req, res, next) => {
         try {
-            // 1. Validate and parse parameters
+            // Validate and parse parameters
             const { futsal_id } = req.params;
             const page = Math.max(1, parseInt(req.query.page) || 1);
             const limit = Math.max(1, parseInt(req.query.limit) || 10);
             const offset = (page - 1) * limit;
-
-            // 2. Strict validation for futsal_id
-            if (!/^\d+$/.test(futsal_id)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Invalid Futsal ID. Must be a numeric value',
-                    received: futsal_id
-                });
-            }
             const futsalId = parseInt(futsal_id, 10);
-
-            // 3. Debug logging (remove in production)
-            console.log(`Fetching bookings for futsal ID: ${futsalId}`);
-
-            // 4. Main query using parameterized queries
             const query = `
                 WITH booking_data AS (
                     SELECT 
@@ -583,7 +559,7 @@ class BookingController {
                 type: sequelize.QueryTypes.SELECT
             });
 
-            // 5. Format response
+
             const response = {
                 success: true,
                 data: results.map(booking => ({
@@ -601,38 +577,22 @@ class BookingController {
             return res.json(response);
 
         } catch (error) {
-            console.error('Error in getBookingsByFutsal:', error);
-            return res.status(500).json({
-                success: false,
-                message: 'Server error while fetching bookings',
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined
-            });
+            next(error);
         }
     };
 
     getBookingsOfFutsal = async (req, res, next) => {
         try {
-            // 1. Validate and parse parameters
+            //  Validate and parse parameters
             const futsalId = req.authUser.futsal_id;
             console.log(req.authUser);
             const page = Math.max(1, parseInt(req.query.page) || 1);
             const limit = Math.max(1, parseInt(req.query.limit) || 10);
             const offset = (page - 1) * limit;
 
-            // // 2. Strict validation for futsal_id
-            // if (!/^\d+$/.test(futsal_id)) {
-            //     return res.status(400).json({
-            //         success: false,
-            //         message: 'Invalid Futsal ID. Must be a numeric value',
-            //         received: futsal_id
-            //     });
-            // }
-            // const futsalId = parseInt(futsal_id, 10);
 
-            // // 3. Debug logging (remove in production)
-            // console.log(`Fetching bookings for futsal ID: ${futsalId}`);
 
-            // 4. Main query using parameterized queries
+            //  Main query using parameterized queries
             console.log("futsalid", futsalId)
             const query = `
                 WITH booking_data AS (
@@ -676,7 +636,7 @@ class BookingController {
                 type: sequelize.QueryTypes.SELECT
             });
 
-            // 5. Format response
+
             const response = {
                 success: true,
                 data: results.map(booking => ({
@@ -694,12 +654,7 @@ class BookingController {
             return res.json(response);
 
         } catch (error) {
-            console.error('Error in getBookingsByFutsal:', error);
-            return res.status(500).json({
-                success: false,
-                message: 'Server error while fetching bookings',
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined
-            });
+            next(error);
         }
     };
 

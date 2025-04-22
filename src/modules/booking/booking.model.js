@@ -54,7 +54,7 @@ const createBookingModel = (sequelize) => {
     Booking.associate = (models) => {
         Booking.hasMany(models.Booked_slot, {
             foreignKey: 'booking_id',
-            as: 'booked_slots'  // This defines the alias
+            as: 'booked_slots'  //  defining the alias
         });
         Booking.belongsTo(models.User, {
             foreignKey: 'user_id'

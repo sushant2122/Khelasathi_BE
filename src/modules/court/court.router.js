@@ -12,12 +12,11 @@ CourtRouter.get('/show-home/:id', loginCheck, futsalCourtCtrl.showForHome);
 
 // Routes for CRUD operations on courts
 CourtRouter.route('/')
-    .get(loginCheck, checkAccess(['Admin', 'Venue']), checkFutsalRegistered(), futsalCourtCtrl.index)
-    .post(loginCheck, checkAccess(['Admin', 'Venue']), checkFutsalRegistered(), bodyValidator(courtCreateDTO), futsalCourtCtrl.store);
+    .get(loginCheck, checkAccess('Venue'), checkFutsalRegistered(), futsalCourtCtrl.index)
+    .post(loginCheck, checkAccess('Venue'), checkFutsalRegistered(), bodyValidator(courtCreateDTO), futsalCourtCtrl.store);
 
 CourtRouter.route("/:id")
-    .get(loginCheck, checkAccess(['Admin', 'Venue', 'Player']), futsalCourtCtrl.show)
-    .put(loginCheck, checkAccess(['Admin', 'Venue']), bodyValidator(courtUpdateDTO), futsalCourtCtrl.update)
-    .delete(loginCheck, checkAccess(['Admin', 'Venue']), futsalCourtCtrl.remove);
+    .put(loginCheck, checkAccess('Venue'), bodyValidator(courtUpdateDTO), futsalCourtCtrl.update)
+    .delete(loginCheck, checkAccess('Venue'), futsalCourtCtrl.remove);
 
 module.exports = CourtRouter;

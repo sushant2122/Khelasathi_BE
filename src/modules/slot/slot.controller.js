@@ -51,7 +51,14 @@ class SlotController {
             next(exception);
         }
     };
-
+    /**
+        *  this function is used to add a slot of a court.
+        * @param {import ("express").Request} req 
+        *  * @param {import ("express").Response} res
+        *  * @param {import ("express").NextFunction} next
+        * @return {void} 
+       
+        */
     store = async (req, res, next) => {
         try {
             const data = req.body;
@@ -87,7 +94,14 @@ class SlotController {
             next(exception);
         }
     }
-
+    /**
+        *  this function is used to update the details of slot.
+        * @param {import ("express").Request} req 
+        *  * @param {import ("express").Response} res
+        *  * @param {import ("express").NextFunction} next
+        * @return {void} 
+       
+        */
     update = async (req, res, next) => {
         try {
             const slot_id = req.params.id;
@@ -119,7 +133,7 @@ class SlotController {
     }
 
     /**
-     *  this function is used to show the details of the banner by logged in user
+     *  this function is used to show the details of the slot by logged in venue owner.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -143,7 +157,7 @@ class SlotController {
 
 
     /**
-     *  this function is used to remove  a banner  by the logged in admin user
+     *  this function is used to remove  a slot  by the logged in venue owner.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -166,7 +180,7 @@ class SlotController {
         }
     }
     /**
-     *  this function is used to fetch the active banner to display in the home page.
+     *  this function is used to fetch the active non booked slots.
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next
@@ -231,9 +245,6 @@ ORDER BY s.start_time;
             next(exception);
         }
     };
-
-
-
 }
 const slotCtrl = new SlotController();
 

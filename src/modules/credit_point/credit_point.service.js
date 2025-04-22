@@ -67,10 +67,6 @@ class CreditPointService {
             throw exception;
         }
     };
-
-
-
-
 }
 const creditSvc = new CreditPointService();
 

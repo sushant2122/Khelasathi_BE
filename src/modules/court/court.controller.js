@@ -53,27 +53,6 @@ class FutsalCourtController {
         }
     };
 
-    /**
-     * This function is used to show the details of a specific court.
-     * @param {import("express").Request} req 
-     * @param {import("express").Response} res 
-     * @param {import("express").NextFunction} next 
-     * @return {void} 
-     */
-    show = async (req, res, next) => {
-        try {
-            const id = req.params.id;
-            const court = await courtSvc.getSingleCourtData({ court_id: id });
-            res.json({
-                result: court,
-                meta: null,
-                message: "Court details.",
-                status: "COURT_FOUND"
-            });
-        } catch (exception) {
-            next(exception);
-        }
-    };
 
     /**
      * This function is used to update a court's data.

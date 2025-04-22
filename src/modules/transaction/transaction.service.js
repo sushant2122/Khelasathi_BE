@@ -60,8 +60,6 @@ class TransactionService {
             };
         }
     };
-
-
     createTransaction = async (data) => {
         try {
 
@@ -99,7 +97,6 @@ class TransactionService {
         }
 
     }
-
     getSingleData = async (filter) => {
         try {
             const transaction = await Transaction.findOne({ where: filter });
@@ -114,8 +111,6 @@ class TransactionService {
             throw exception;
         }
     }
-
-
     listAllByFilter = async ({ limit = 10, offset = 0, filter = {} }) => {
         try {
             const total = await Transaction.count({

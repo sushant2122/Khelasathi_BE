@@ -2,7 +2,6 @@ const { cloudinary } = require("../config/cloudinary.config")
 
 const fs = require("fs");
 
-
 const uploadHelper = async (filepaths, folder = "khelasathi") => {
     try {
         // Convert single file to array for uniform processing
@@ -45,7 +44,6 @@ const randomStringGenerator = (len = 100) => {
     }
     return random
 }
-
 
 module.exports = {
     uploadHelper, fileDelete, randomStringGenerator

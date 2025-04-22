@@ -46,15 +46,11 @@ class FutsalService {
 
         return data;
     };
-
-
-
     transformFutsalVerifyData = async (req) => {
         const data = req.body;
         data.verification_date = new Date();
         return data;
     };
-
 
     createFutsal = async (data, req) => {
         try {
@@ -180,9 +176,6 @@ class FutsalService {
             throw exception;
         }
     };
-
-
-
 
 }
 const futsalSvc = new FutsalService();

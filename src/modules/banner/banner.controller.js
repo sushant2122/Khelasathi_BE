@@ -3,7 +3,7 @@ const { bannerSvc } = require("./banner.service")
 const { Op } = require("sequelize"); // Import Sequelize operators
 class BannerController {
     /**
-     *  * this function is used to show the banners by logged in user
+     *  * this function is used to show all the banners by logged in user
      * @param {import ("express").Request} req 
      *  * @param {import ("express").Response} res
      *  * @param {import ("express").NextFunction} next

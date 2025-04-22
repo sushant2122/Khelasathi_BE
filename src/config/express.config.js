@@ -1,19 +1,19 @@
 require("dotenv").config();
 const express = require('express');
-require("./db.config");
+require("./db.config"); // for initializing the database 
 const router = require('./router.config');
 const app = express();
 const cors = require("cors");
 
-app.use(cors())
+app.use(cors()) //used for the connection of frontend and backend  cross origin resource sharing 
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Routes verisoning
 app.use("/api/v1", router);
 
-// Error handling (unchanged from your original)
+// Error handling for image
 app.use((error, req, res, next) => {
     let result = error.detail || null;
     let message = error.message || "Server error...";

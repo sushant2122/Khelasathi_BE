@@ -2,6 +2,14 @@
 const { Booking, Transaction, Futsal, sequelize, Court, Booked_slot, Slot } = require("../../config/db.config");
 
 class AdminStatsController {
+    /**
+  *  this function is used to show the details for the cards in the admin 
+  * @param {import ("express").Request} req 
+  *  * @param {import ("express").Response} res
+  *  * @param {import ("express").NextFunction} next
+  * @return {void} 
+ 
+  */
     getAdminStats = async (req, res, next) => {
         try {
             // 1. Get total bookings count
@@ -32,7 +40,7 @@ class AdminStatsController {
             // Format the revenue as currency
             const formattedRevenue = new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: 'USD'
+                currency: 'NPR'
             }).format(totalRevenue || 0);
 
             const stats = [
@@ -51,6 +59,14 @@ class AdminStatsController {
             next(error);
         }
     }
+    /**
+*  this function is used to count the total no. of booking by venue
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     getTopBookingsByVenue = async (req, res, next) => {
         try {
             const limit = req.query.limit || 5; // Default to top 5 venues
@@ -93,6 +109,15 @@ class AdminStatsController {
             next(error);
         }
     }
+
+    /**
+*  this function is used to get the monthly revenues 
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     getMonthlyRevenue = async (req, res, next) => {
         try {
             const query = `
@@ -140,7 +165,14 @@ class AdminStatsController {
             next(error);
         }
     }
-
+    /**
+*  this function is used to get the booking status of all futsals
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     getBookingStatusStats = async (req, res, next) => {
         try {
             const query = `
@@ -187,7 +219,14 @@ class AdminStatsController {
             next(error);
         }
     }
-
+    /**
+*  this function is used to get the latezt transaction to show up in dashboard
+* @param {import ("express").Request} req 
+*  * @param {import ("express").Response} res
+*  * @param {import ("express").NextFunction} next
+* @return {void} 
+ 
+*/
     getLatestTransactions = async (req, res, next) => {
         try {
             const query = `

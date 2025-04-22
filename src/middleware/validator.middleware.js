@@ -11,7 +11,7 @@ const bodyValidator = (schema) => {
                     if (files && files.length > 0) {
                         data[fieldname] = files[0].filename; // Add first file path
                     } else {
-                        console.log(`No file uploaded for ${fieldname}`);
+                        // console.log(`No file uploaded for ${fieldname}`);
                         data[fieldname] = null; // Set to null if no file is uploaded
                     }
                 }

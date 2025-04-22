@@ -5,7 +5,6 @@ class SlotService {
     constructor(model) {
         this.model = model;
     }
-
     async checkOverlappingSlots(court_id, start_time, end_time, slot_id = null) {
         const whereClause = {
             court_id,
@@ -27,7 +26,6 @@ class SlotService {
 
         return overlappingSlots.length > 0;
     }
-
     async createSlot(data) {
         try {
             const isOverlapping = await this.checkOverlappingSlots(
@@ -46,7 +44,6 @@ class SlotService {
             throw exception;
         }
     }
-
     async updateSlot(slot_id, data) {
         try {
 
@@ -63,8 +60,6 @@ class SlotService {
             throw exception;
         }
     }
-
-
     listAllByFilter = async (filter = {}) => {
         try {
             const list = await Slot.findAll({ where: filter });
@@ -73,7 +68,6 @@ class SlotService {
             throw exception;
         }
     };
-
     getSingleSlotData = async (filter) => {
         try {
             const slotDetail = await Slot.findOne({ where: filter });
@@ -88,7 +82,6 @@ class SlotService {
             throw exception;
         }
     }
-
     deleteSlotById = async (id) => {
 
         try {
@@ -108,7 +101,6 @@ class SlotService {
             throw exception;
         }
     };
-
 }
 const slotSvc = new SlotService(Slot);
 module.exports = { slotSvc };

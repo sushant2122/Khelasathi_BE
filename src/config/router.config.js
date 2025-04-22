@@ -18,7 +18,7 @@ const VenueStatsRouter = require('../modules/venue-stats/venue-stats.router');
 router.use("/health", (req, res) => {
     res.end("This is success.");
 });
-
+//mounting all the routes from here 
 router.use('/auth', authRouter);
 
 router.use('/banner', bannerRouter);
@@ -47,7 +47,7 @@ router.use('/admin-stats', AdminStatsRouter)
 router.use('/venue-stats', VenueStatsRouter)
 
 
-// Default route
+// Default route used to check if the api is correct or not 
 router.use("/", (req, res) => {
     res.send("Hello world");
 });

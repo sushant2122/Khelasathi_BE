@@ -6,10 +6,11 @@ const EventName = {
     ACTIVATION_EMAIL: "accountactivated",
     FORGET_PASSWORD: "forgotpassword",
     PASSWORD_RESET_SUCCESSFUL: "passwordresetsuccess",
-    CONTACT_US: "contactus"
+    CONTACT_US: "contactus",
+    TRANSACTION: "transaction"
 
 }
-
+//mail sender event for signup
 myEvent.on(EventName.SIGNUP_EMAIL, async (data) => {
     try {
         await Mailsvc.mailSend({
@@ -34,7 +35,7 @@ myEvent.on(EventName.SIGNUP_EMAIL, async (data) => {
 
     }
 })
-
+//mail sender even for account activation
 myEvent.on(EventName.ACTIVATION_EMAIL, async (data) => {
     try {
         await Mailsvc.mailSend({
@@ -59,7 +60,7 @@ myEvent.on(EventName.ACTIVATION_EMAIL, async (data) => {
 
     }
 })
-
+//mail sending event for forget password
 myEvent.on(EventName.FORGET_PASSWORD, async (data) => {
     try {
         await Mailsvc.mailSend({
@@ -85,7 +86,7 @@ myEvent.on(EventName.FORGET_PASSWORD, async (data) => {
     }
 })
 
-
+//mail sending event for password reset password
 myEvent.on(EventName.PASSWORD_RESET_SUCCESSFUL, async (data) => {
     try {
         await Mailsvc.mailSend({
@@ -110,6 +111,7 @@ myEvent.on(EventName.PASSWORD_RESET_SUCCESSFUL, async (data) => {
 
     }
 })
+//mail sending event for contact us form 
 myEvent.on(EventName.CONTACT_US, async (data) => {
     try {
         await Mailsvc.mailSend({

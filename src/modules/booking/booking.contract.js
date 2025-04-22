@@ -7,7 +7,6 @@ const slotSchema = Joi.object({
     credit_point: Joi.number().precision(2).required()
 
 });
-
 const bookingCreateDTO = Joi.object({
     booking_date: Joi.date().required(),
     remarks: Joi.string().max(255).optional(),
@@ -20,9 +19,5 @@ const bookingUpdateDTO = Joi.object({
     is_paid: Joi.boolean().default(false),
     status: Joi.string().valid('pending', 'confirmed', 'cancelled', 'completed', 'no-show').default('pending')
 });
-
-// const bookingCancelDTO = Joi.object({
-//     mobile: Joi.string().min(10).max(10).required()
-// });
 
 module.exports = { bookingCreateDTO, bookingUpdateDTO };

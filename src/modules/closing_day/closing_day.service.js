@@ -19,39 +19,6 @@ class CLosingDayService {
             throw exception;
         }
     };
-
-    getSingleClosingData = async (filter) => {
-        try {
-            const closingdetail = await Closing_day.findOne({ where: filter });
-
-            if (!closingdetail) {
-                throw ({ code: 404, message: "Closing day does not exists.", status: "CLOSING_DAY_NOT_FOUND" });
-            } else {
-                return closingdetail;
-            }
-
-        } catch (exception) {
-            throw exception;
-        }
-    }
-    updateClosing = async (Id, data) => {
-        try {
-            // First, make sure the banner exists
-            const closing = await Closing_day.findOne({ where: { closing_day_id: Id } });
-
-            if (!closing) {
-                throw { code: 400, message: "Closing day not found", status: "CLOSING_DAY_NOT_FOUND" };
-            }
-
-            // Now update the banner with the new data
-            const updatedClosing = await closing.update(data);
-
-            return updatedClosing;
-
-        } catch (exception) {
-            throw exception;
-        }
-    }
     deleteClosingById = async (id) => {
 
         try {

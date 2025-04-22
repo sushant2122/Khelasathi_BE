@@ -8,7 +8,6 @@ class TagService {
         return data;
 
     }
-
     createTag = async (data) => {
         try {
             const newtag = await Tag.create(data);
@@ -36,8 +35,6 @@ class TagService {
             throw exception;
         }
     };
-
-
     updateTag = async (TagId, data) => {
         try {
             // First, make sure the Service exists
@@ -75,7 +72,6 @@ class TagService {
             throw exception;
         }
     };
-
 }
 const tagSvc = new TagService();
 module.exports = { tagSvc };

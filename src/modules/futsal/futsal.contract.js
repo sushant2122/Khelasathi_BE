@@ -1,6 +1,5 @@
 const Joi = require("joi");
 
-
 const futsalCreateDTO = Joi.object({
     name: Joi.string().min(3).max(50).required(),
     description: Joi.string().min(10).required(),
@@ -34,6 +33,5 @@ const futsalVerifyDTO = Joi.object({
     verification_status: Joi.string().regex(/^(pending|approved|rejected)$/).default('pending')
 
 });
-
 
 module.exports = { futsalCreateDTO, futsalUpdateDTO, futsalVerifyDTO }

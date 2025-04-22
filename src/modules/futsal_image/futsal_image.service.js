@@ -39,7 +39,6 @@ class FutsalImageService {
             throw exception;
         }
     };
-
     getSingleFutsalImgData = async (filter) => {
         try {
             const futsalImageDetail = await Futsal_image.findOne({
@@ -96,10 +95,6 @@ class FutsalImageService {
             throw exception;
         }
     };
-
-
-
-
 }
 const futsalImgSvc = new FutsalImageService();
 module.exports = { futsalImgSvc };

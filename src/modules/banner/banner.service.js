@@ -2,7 +2,6 @@ const { Banner, User } = require("../../config/db.config");
 const { uploadHelper } = require("../../utilities/helper")
 
 class BannerService {
-
     transformBannerData = async (req) => {
         const data = req.body;
         data.created_by = req.authUser.user_id;
@@ -109,10 +108,6 @@ class BannerService {
             throw exception;
         }
     };
-
-
-
-
 }
 const bannerSvc = new BannerService();
 module.exports = { bannerSvc };
