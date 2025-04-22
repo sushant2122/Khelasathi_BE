@@ -88,6 +88,4 @@ CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
 ### 4. Start development server
-```bash
-# (Command to run the backend)
 npm run dev
