@@ -74,18 +74,6 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EOT
 
-# JWT
-JWT_SECRET=your_jwt_secret
-
-# Khalti
-KHALTI_SECRET_KEY=your_khalti_key
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-EOT
-
 ### 5. Install nodemon globally
 npm i nodemon -g 
 ### 4. Start development server
